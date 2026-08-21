@@ -1,0 +1,16 @@
+# Dependencias
+backend/node_modules/
+frontend/node_modules/
+
+# Variables de entorno
+backend/.env
+
+# Archivos de compilación de React
+frontend/build/
+
+# Logs
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
