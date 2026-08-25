@@ -1,0 +1,514 @@
+/* =========================
+   CONTENEDOR
+========================= */
+
+.clientes-container {
+    padding: 35px 40px;
+    min-height: 100vh;
+    background: #f8f5f9;
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.clientes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.clientes-header h1 {
+    color: #7d6685;
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+
+.clientes-header p {
+    color: #0c0c0c;
+    font-size: 15px;
+}
+
+
+/* =========================
+   BOTÓN NUEVO
+========================= */
+
+.btn-nuevo {
+    border: none;
+    border-radius: 30px;
+
+    padding: 12px 22px;
+
+    background: #f1afc9;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+.btn-nuevo:hover {
+    background: #f78bb6;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   MENSAJES
+========================= */
+
+.mensaje-exito,
+.mensaje-error {
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.mensaje-exito {
+    background: #eee1f5;
+    color: #765b80;
+}
+
+.mensaje-error {
+    background: #fcecef;
+    color: #a45d73;
+}
+
+
+/* =========================
+   BUSCADOR
+========================= */
+
+.clientes-herramientas {
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+    margin-bottom: 20px;
+}
+
+.clientes-herramientas input {
+    width: 100%;
+
+    padding: 12px 15px;
+
+    border: 1px solid #ddd3e0;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    color: #0c0c0c;
+}
+
+.clientes-herramientas input:focus {
+    border-color: #B899C8;
+
+    box-shadow: 0 0 0 3px rgba(184, 153, 200, 0.12);
+}
+
+
+/* =========================
+   TABLA
+========================= */
+
+.tabla-container {
+    background: white;
+
+    border-radius: 15px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+    overflow-x: auto;
+}
+
+.tabla-container table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.tabla-container th {
+    padding: 15px;
+
+    background: #eee1f5;
+
+    color: #765b80;
+
+    text-align: left;
+
+    font-size: 14px;
+}
+
+.tabla-container td {
+    padding: 14px 15px;
+
+    border-bottom: 1px solid #eee;
+
+    color: #0c0c0c;
+
+    font-size: 14px;
+}
+
+.tabla-container tbody tr:hover {
+    background: #fcf9fd;
+}
+
+
+/* =========================
+   BOTONES DE ACCIÓN
+========================= */
+
+.acciones{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+}
+
+.btn-ver,
+.btn-editar,
+.btn-eliminar{
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.25s ease;
+    font-size:15px;
+}
+
+.btn-ver{
+    background:#f3ecd1;
+    color:#9b733b;
+}
+
+.btn-ver:hover{
+    background:#e8d59f;
+    transform:scale(1.08);
+}
+
+.btn-editar{
+    background:#eee1f5;
+    color:#765b80;
+}
+
+.btn-editar:hover{
+    background:#B899C8;
+    color:white;
+    transform:scale(1.08);
+}
+
+.btn-eliminar{
+    background:#fde7ed;
+    color:#c04b73;
+}
+
+.btn-eliminar:hover{
+    background:#f78bb6;
+    color:white;
+    transform:scale(1.08);
+}
+
+/* =========================
+   SIN CLIENTES
+========================= */
+
+.sin-clientes {
+    text-align: center;
+
+    padding: 35px !important;
+
+    color: #0c0c0c!important;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(60, 45, 65, 0.35);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 1000;
+}
+
+.modal-cliente {
+    width: 100%;
+
+    max-width: 600px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+
+    overflow: hidden;
+}
+
+
+/* =========================
+   CABECERA MODAL
+========================= */
+
+.modal-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 25px;
+
+    background: #eee1f5;
+
+    border-bottom: 1px solid #e1d5e5;
+}
+
+.modal-header h2 {
+    color: #765b80;
+
+    font-size: 21px;
+}
+
+.cerrar-modal {
+    border: none;
+
+    background: transparent;
+
+    color: #765b80;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    line-height: 1;
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+
+.modal-cliente form {
+    padding: 25px;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+
+    color: #6f6074;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 11px 13px;
+
+    border: 1px solid #ddd3e0;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    color: #0c0c0c;
+
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #B899C8;
+
+    box-shadow: 0 0 0 3px rgba(184, 153, 200, 0.12);
+}
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================
+   BOTONES MODAL
+========================= */
+
+.modal-botones {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.btn-cancelar,
+.btn-guardar {
+    padding: 10px 20px;
+
+    border-radius: 25px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.3s ease;
+}
+
+.btn-cancelar {
+    border: 1px solid #ddd3e0;
+
+    background: white;
+
+    color: #0c0c0c;
+}
+
+.btn-cancelar:hover {
+    background: #f5f2f6;
+}
+
+.btn-guardar {
+    border: none;
+
+    background: #f1afc9;
+
+    color: white;
+
+    font-weight: 600;
+}
+
+.btn-guardar:hover {
+    background: #f78bb6;
+}
+
+
+    /* =========================
+   MODAL DETALLE
+========================= */
+
+.modal-detalle{
+    width:100%;
+    max-width:550px;
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 35px rgba(0,0,0,.15);
+}
+
+.detalle-contenido{
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.detalle-item{
+    border-bottom:1px solid #eee;
+    padding-bottom:12px;
+}
+
+.detalle-item:last-child{
+    border-bottom:none;
+}
+
+.detalle-item span{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:#B899C8;
+    margin-bottom:5px;
+}
+
+.detalle-item p{
+    color:#0c0c0c;
+    line-height:1.5;
+}
+
+.observaciones p{
+    background:#fcf9fd;
+    border:1px solid #eee1f5;
+    padding:12px;
+    border-radius:10px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .clientes-container {
+        padding: 25px 20px;
+    }
+
+    .clientes-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .campo-completo {
+        grid-column: auto;
+    }
+
+    .modal-cliente {
+        max-height: 90vh;
+
+        overflow-y: auto;
+    }
+
+}
