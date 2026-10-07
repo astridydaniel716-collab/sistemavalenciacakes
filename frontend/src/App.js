@@ -5,10 +5,12 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Clientes from './pages/Clientes';
 import Proveedores from './pages/Proveedores';
+import Productos from './pages/Productos';
 import Pedidos from './pages/Pedidos';
 
 function App() {
 
+    // Obtener el token de autenticación
     const token = localStorage.getItem('token');
 
     return (
@@ -16,17 +18,18 @@ function App() {
 
             <Routes>
 
-                {/* Login */}
+                {/* Acceso al sistema */}
                 <Route
                     path="/"
                     element={token ? <Navigate to="/dashboard" /> : <Login />}
                 />
 
-                {/* Dashboard */}
+                {/* Rutas protegidas */}
                 <Route
                     path="/dashboard"
                     element={token ? <Dashboard /> : <Navigate to="/" />}
                 />
+
                 <Route
                     path="/clientes"
                     element={token ? <Clientes /> : <Navigate to="/" />}
@@ -38,16 +41,23 @@ function App() {
                 />
 
                 <Route
+                    path="/productos"
+                    element={token ? <Productos /> : <Navigate to="/" />}
+                />
+
+                <Route
                     path="/pedidos"
                     element={token ? <Pedidos /> : <Navigate to="/" />}
                 />
 
+                {/* Redirigir rutas inexistentes */}
                 <Route
                     path="*"
-                    element={<Navigate to={token ? "/dashboard" : "/"} />}
+                    element={
+                        <Navigate to={token ? "/dashboard" : "/"} />
+                    }
                 />
 
-                
             </Routes>
 
         </BrowserRouter>

@@ -92,6 +92,30 @@ const editarCliente = async (id, cliente) => {
 
     return resultado.rows[0];
 };
+// Obtener historial de pedidos de un cliente
+const obtenerHistorialPedidos = async (idcliente) => {
+
+    const resultado = await Conexion.query(
+        `SELECT 
+            p.idpedido,
+            p.fecha_pedido,
+            p.fecha_entrega,
+            p.hora_entrega,
+            p.tipo_entrega,
+            p.direccion_entrega,
+            p.estado,
+            p.observaciones,
+            p.total,
+            p.anticipo,
+            p.saldo
+         FROM pedidos p
+         WHERE p.idcliente = $1
+         ORDER BY p.fecha_pedido DESC, p.idpedido DESC`,
+        [idcliente]
+    );
+
+    return resultado.rows;
+};
 
 
 // Eliminar cliente
@@ -114,5 +138,6 @@ module.exports = {
     obtenerClientePorId,
     buscarClientes,
     editarCliente,
+    obtenerHistorialPedidos,
     eliminarCliente
 };

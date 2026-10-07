@@ -133,6 +133,31 @@ const editarCliente = async (req, res) => {
     }
 };
 
+// Obtener historial de pedidos de un cliente
+const obtenerHistorialPedidos = async (req, res) => {
+
+    try {
+
+        const idcliente = req.params.id;
+
+        const historial = await ClienteModelo.obtenerHistorialPedidos(
+            idcliente
+        );
+
+        res.status(200).json(historial);
+
+    } catch (error) {
+
+        console.error(
+            "Error al obtener historial de pedidos:",
+            error
+        );
+
+        res.status(500).json({
+            mensaje: "Error al obtener el historial de pedidos del cliente."
+        });
+    }
+};
 
 // Eliminar cliente
 const eliminarCliente = async (req, res) => {
@@ -171,5 +196,6 @@ module.exports = {
     obtenerClientePorId,
     buscarClientes,
     editarCliente,
+    obtenerHistorialPedidos,
     eliminarCliente
 };

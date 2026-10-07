@@ -15,19 +15,12 @@ import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 function Proveedores() {
 
     const [proveedores, setProveedores] = useState([]);
-
     const [busqueda, setBusqueda] = useState('');
-
     const [mostrarModal, setMostrarModal] = useState(false);
-
     const [modoEdicion, setModoEdicion] = useState(false);
-
     const [proveedorEditando, setProveedorEditando] = useState(null);
-
     const [mensaje, setMensaje] = useState('');
-
     const [error, setError] = useState('');
-
     const [formulario, setFormulario] = useState({
         nombre: '',
         telefono: '',
@@ -38,7 +31,6 @@ function Proveedores() {
     });
 
     const [proveedorDetalle, setProveedorDetalle] = useState(null);
-    
     const [mostrarDetalle, setMostrarDetalle] = useState(false);
 
 

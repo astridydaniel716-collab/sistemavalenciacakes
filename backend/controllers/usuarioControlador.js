@@ -1,18 +1,21 @@
-const bcrypt = require('bcrypt');
-const UsuarioModelo = require('../models/usuarioModelo');
-const jwt = require('jsonwebtoken');
-const Config = require('../config/Config');
+const bcrypt = require('bcrypt'); // Encripta y compara contraseñas
+const UsuarioModelo = require('../models/usuarioModelo'); // Modelo de usuarios
+const jwt = require('jsonwebtoken'); // Genera tokens de autenticación
+const Config = require('../config/Config'); // Configuración del sistema
 
+// Registrar un nuevo usuario
 const registrarUsuario = async (req, res) => {
     try {
         const { nombre, usuario, contrasena } = req.body;
 
+        // Validar campos obligatorios
         if (!nombre || !usuario || !contrasena) {
             return res.status(400).json({
                 mensaje: 'Nombre, usuario y contraseña son obligatorios'
             });
         }
 
+        // Verificar si el usuario ya existe
         const usuarioExistente = await UsuarioModelo.buscarPorUsuario(usuario);
 
         if (usuarioExistente) {
@@ -21,8 +24,10 @@ const registrarUsuario = async (req, res) => {
             });
         }
 
+        // Encriptar la contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
+        // Crear usuario con rol de administrador
         const nuevoUsuario = await UsuarioModelo.crearUsuario(
             nombre,
             usuario,
@@ -44,16 +49,20 @@ const registrarUsuario = async (req, res) => {
     }
 };
 
+
+// Iniciar sesión
 const iniciarSesion = async (req, res) => {
     try {
         const { usuario, contrasena } = req.body;
 
+        // Validar credenciales
         if (!usuario || !contrasena) {
             return res.status(400).json({
                 mensaje: 'El usuario y la contraseña son obligatorios'
             });
         }
 
+        // Buscar usuario en la base de datos
         const usuarioEncontrado = await UsuarioModelo.buscarPorUsuario(usuario);
 
         if (!usuarioEncontrado) {
@@ -62,6 +71,7 @@ const iniciarSesion = async (req, res) => {
             });
         }
 
+        // Comparar contraseña ingresada con la encriptada
         const contrasenaValida = await bcrypt.compare(
             contrasena,
             usuarioEncontrado.contrasena
@@ -73,21 +83,24 @@ const iniciarSesion = async (req, res) => {
             });
         }
 
-    const token = jwt.sign(
-    {
-        idusuario: usuarioEncontrado.idusuario,
-        usuario: usuarioEncontrado.usuario,
-        rol: usuarioEncontrado.rol
-    },
-    Config.JWT_SECRET,
-    {
-        expiresIn: '2h'
-    }
-);    
+        // Generar token JWT
+        const token = jwt.sign(
+            {
+                idusuario: usuarioEncontrado.idusuario,
+                usuario: usuarioEncontrado.usuario,
+                rol: usuarioEncontrado.rol
+            },
+            Config.JWT_SECRET,
+            {
+                expiresIn: '2h'
+            }
+        );
 
         res.json({
             mensaje: 'Inicio de sesión exitoso',
             token: token,
+
+            // Datos del usuario autenticado
             usuario: {
                 idusuario: usuarioEncontrado.idusuario,
                 nombre: usuarioEncontrado.nombre,

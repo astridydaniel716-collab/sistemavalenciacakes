@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
     obtenerClientes,
     crearCliente,
     buscarClientes,
     editarCliente,
+    obtenerHistorialPedidos,
     eliminarCliente
 } from '../services/clientesService';
 
@@ -14,20 +16,14 @@ import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 
 function Clientes() {
 
+    const navigate = useNavigate();
     const [clientes, setClientes] = useState([]);
-
     const [busqueda, setBusqueda] = useState('');
-
     const [mostrarModal, setMostrarModal] = useState(false);
-
     const [modoEdicion, setModoEdicion] = useState(false);
-
     const [clienteEditando, setClienteEditando] = useState(null);
-
     const [mensaje, setMensaje] = useState('');
-
     const [error, setError] = useState('');
-
     const [formulario, setFormulario] = useState({
         nombre: '',
         telefono: '',
@@ -37,8 +33,11 @@ function Clientes() {
     });
 
     const [clienteDetalle, setClienteDetalle] = useState(null);
-    
     const [mostrarDetalle, setMostrarDetalle] = useState(false);
+    const [historialPedidos, setHistorialPedidos] = useState([]);
+    const [mostrarHistorial, setMostrarHistorial] = useState(false);
+    const [clienteHistorial, setClienteHistorial] = useState(null);
+    const [cargandoHistorial, setCargandoHistorial] = useState(false);
 
 
     // Cargar clientes al entrar al módulo
@@ -123,6 +122,46 @@ function Clientes() {
     const verDetalle = (cliente) => {
         setClienteDetalle(cliente);
         setMostrarDetalle(true);
+};
+
+// Ver historial de pedidos del cliente
+const verHistorial = async (cliente) => {
+
+    try {
+
+        setCargandoHistorial(true);
+        setClienteHistorial(cliente);
+        setMostrarHistorial(true);
+
+        const pedidos = await obtenerHistorialPedidos(
+            cliente.idcliente
+        );
+
+        setHistorialPedidos(pedidos);
+
+    } catch (error) {
+
+        console.error('Error al obtener historial:', error);
+
+        setHistorialPedidos([]);
+
+    } finally {
+
+        setCargandoHistorial(false);
+
+    }
+};
+
+// Abrir detalle del pedido desde el historial
+const abrirPedidoDesdeHistorial = (idpedido) => {
+
+    setMostrarHistorial(false);
+
+    navigate('/Pedidos', {
+        state: {
+            abrirPedido: idpedido
+        }
+    });
 };
 
     // Guardar cliente
@@ -323,6 +362,14 @@ function Clientes() {
                                         title="Ver detalle"
                                     >
                                         <FaEye />
+                                    </button>
+                                    
+                                    <button
+                                        className="btn-historial"
+                                        onClick={() => verHistorial(cliente)}
+                                        title="Historial de pedidos"
+                                    >
+                                        📋
                                     </button>
 
                                     <button
@@ -568,6 +615,145 @@ function Clientes() {
                 <button
                     className="btn-cancelar"
                     onClick={() => setMostrarDetalle(false)}
+                >
+                    Cerrar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+)}
+
+{/* MODAL HISTORIAL DE PEDIDOS */}
+
+{mostrarHistorial && clienteHistorial && (
+
+    <div className="modal-overlay">
+
+        <div className="modal-historial">
+
+            <div className="modal-header">
+
+                <div>
+                    <h2>Historial de pedidos</h2>
+
+                    <p className="subtitulo-historial">
+                        {clienteHistorial.nombre}
+                    </p>
+                </div>
+
+                <button
+                    className="cerrar-modal"
+                    onClick={() => setMostrarHistorial(false)}
+                >
+                    ×
+                </button>
+
+            </div>
+
+            {cargandoHistorial ? (
+
+                <p className="historial-cargando">
+                    Cargando historial...
+                </p>
+
+            ) : historialPedidos.length === 0 ? (
+
+                <p className="historial-vacio">
+                    Este cliente no tiene pedidos registrados.
+                </p>
+
+            ) : (
+
+                <div className="tabla-historial-container">
+
+                    <table className="tabla-historial">
+
+                        <thead>
+
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Fecha pedido</th>
+                                <th>Fecha entrega</th>
+                                <th>Hora</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {historialPedidos.map((pedido) => (
+
+                                 <tr
+                                    key={pedido.idpedido}
+                                    className="fila-pedido-historial"
+                                    onClick={() => abrirPedidoDesdeHistorial(pedido.idpedido)}
+                                >
+
+                                <td>
+                                    #{pedido.idpedido}
+                                </td>
+
+                                    <td>
+                                        {pedido.fecha_pedido
+                                            ? new Date(
+                                                pedido.fecha_pedido
+                                            ).toLocaleDateString('es-CO')
+                                            : '-'}
+                                    </td>
+
+                                    <td>
+                                        {pedido.fecha_entrega
+                                            ? new Date(
+                                                pedido.fecha_entrega
+                                            ).toLocaleDateString('es-CO')
+                                            : '-'}
+                                    </td>
+
+                                    <td>
+                                        {pedido.hora_entrega || '-'}
+                                    </td>
+
+                                    <td>
+                                        ${Number(
+                                            pedido.total || 0
+                                        ).toLocaleString('es-CO')}
+                                    </td>
+
+                                    <td>
+
+                                        <span
+                                            className={`estado-historial ${pedido.estado
+                                                .toLowerCase()
+                                                .replaceAll(' ', '-')}`}
+                                        >
+                                            {pedido.estado}
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            ))}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            )}
+
+            <div className="modal-botones">
+
+                <button
+                    className="btn-cancelar"
+                    onClick={() => setMostrarHistorial(false)}
                 >
                     Cerrar
                 </button>

@@ -1,0 +1,737 @@
+/* ===================================================
+   MÓDULO PEDIDOS - VALENCIA CAKES
+   =================================================== */
+
+
+/* =======================
+   CONTENEDOR
+   ======================= */
+
+.contenedor-pedidos {
+    padding: 35px 40px;
+    min-height: 100vh;
+    background: #f8f5f9;
+}
+
+
+/* =======================
+   ENCABEZADO
+   ======================= */
+
+.encabezado-modulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.encabezado-modulo h2 {
+    margin: 0;
+    color: #7d6685;
+    font-size: 30px;
+}
+
+.btn-nuevo {
+    background: #f1afc9;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-nuevo:hover {
+    background: #f78bb6;
+    transform: translateY(-2px);
+}
+
+
+/* =======================
+   BUSCADOR
+   ======================= */
+
+.barra-busqueda {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.barra-busqueda input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd3e0;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.barra-busqueda input:focus {
+    border-color: #b899c8;
+    box-shadow: 0 0 0 3px rgba(184, 153, 200, 0.15);
+}
+
+
+/* =======================
+   TABLA PEDIDOS
+   ======================= */
+
+.tabla-pedidos {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.tabla-pedidos thead {
+    background: #eee1f5;
+}
+
+.tabla-pedidos th {
+    padding: 16px;
+    text-align: left;
+    color: #765b80;
+    font-size: 14px;
+}
+
+.tabla-pedidos td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 14px;
+    color: #555;
+}
+
+.tabla-pedidos tbody tr:hover {
+    background: #fcf9fd;
+}
+
+
+/* =======================
+   ESTADOS
+   ======================= */
+
+.estado {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.estado.pendiente {
+    background: #fff4c2;
+    color: #9c7a00;
+}
+
+.estado.en-preparación,
+.estado.en-preparacion {
+    background: #dfefff;
+    color: #0d6efd;
+}
+
+.estado.entregado {
+    background: #d9f6df;
+    color: #2d8a44;
+}
+
+.estado.cancelado {
+    background: #fde3e3;
+    color: #c0392b;
+}
+
+
+/* =======================
+   BOTONES DE ACCIONES
+   ======================= */
+
+.acciones {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-ver,
+.btn-editar,
+.btn-eliminar {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 15px;
+}
+
+.btn-ver {
+    background: #f3ecd1;
+    color: #85602c;
+}
+
+.btn-ver:hover {
+    background: #ead59a;
+}
+
+.btn-editar {
+    background: #eee1f5;
+    color: #765b80;
+}
+
+.btn-editar:hover {
+    background: #b899c8;
+    color: white;
+}
+
+.btn-eliminar {
+    background: #fde7ed;
+    color: #d04d7b;
+}
+
+.btn-eliminar:hover {
+    background: #f78bb6;
+    color: white;
+}
+
+.btn-eliminar:disabled,
+.btn-editar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* =======================
+   MODAL
+   ======================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 20, 40, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: 20px;
+}
+
+.modal {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-pedido {
+    max-width: 950px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-detalle-pedido {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal h3 {
+    margin: 0;
+    padding: 20px 25px;
+    background: #eee1f5;
+    color: #765b80;
+    font-size: 22px;
+}
+
+.modal form {
+    padding: 25px;
+}
+
+
+/* =======================
+   FORMULARIO
+   ======================= */
+
+.grid-pedido {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 6px;
+    color: #6f6074;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #ddd3e0;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    color: #555;
+    background: white;
+    box-sizing: border-box;
+}
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+    border-color: #b899c8;
+    box-shadow: 0 0 0 3px rgba(184, 153, 200, 0.12);
+}
+
+.modal textarea {
+    resize: vertical;
+}
+
+.modal input:disabled {
+    background: #f3f3f3;
+    color: #999;
+}
+
+
+/* =======================
+   PRODUCTOS DEL PEDIDO
+   ======================= */
+
+.producto-card {
+    background: #faf8fb;
+    border: 1px solid #eee1f5;
+    padding: 18px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.producto-card h5 {
+    color: #765b80;
+    margin: 0 0 15px;
+    font-size: 16px;
+}
+
+.grid-producto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.btn-agregar-producto {
+    margin-top: 18px;
+    background: #b899c8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-agregar-producto:hover {
+    background: #a782ba;
+}
+
+
+/* =======================
+   TABLA DETALLE
+   ======================= */
+
+.tabla-detalle {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0 25px;
+}
+
+.tabla-detalle thead {
+    background: #f5edf8;
+}
+
+.tabla-detalle th {
+    padding: 12px;
+    color: #765b80;
+    font-size: 13px;
+    text-align: left;
+}
+
+.tabla-detalle td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+
+.tabla-detalle tbody tr:hover {
+    background: #fcf9fd;
+}
+
+
+/* =======================
+   TOTALES
+   ======================= */
+
+.grid-totales {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.grid-totales input {
+    background: #faf8fb;
+    font-weight: 600;
+}
+
+.grid-totales div:last-child input {
+    color: #b04a76;
+}
+
+
+/* =======================
+   BOTONES DEL MODAL
+   ======================= */
+
+.botones-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-guardar,
+.btn-cancelar,
+.btn-cerrar {
+    border: none;
+    padding: 11px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-guardar {
+    background: #f1afc9;
+    color: white;
+}
+
+.btn-guardar:hover {
+    background: #f78bb6;
+}
+
+.btn-cancelar {
+    background: #ece7f0;
+    color: #666;
+}
+
+.btn-cancelar:hover {
+    background: #ddd3e0;
+}
+
+.btn-cerrar {
+    background: #b899c8;
+    color: white;
+    margin: 20px;
+}
+
+.btn-cerrar:hover {
+    background: #a884bc;
+}
+
+
+/* =======================
+   DETALLE DEL PEDIDO
+   ======================= */
+
+.detalle-pedido {
+    padding: 25px;
+}
+
+.detalle-seccion {
+    margin-bottom: 25px;
+}
+
+.detalle-seccion h4 {
+    color: #765b80;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee1f5;
+}
+
+.detalle-seccion p {
+    margin: 8px 0;
+    color: #555;
+}
+
+.detalle-seccion strong {
+    color: #765b80;
+}
+
+.producto-detalle {
+    background: #faf8fb;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.producto-detalle hr {
+    border: none;
+    border-top: 1px solid #e8ddec;
+    margin-top: 15px;
+}
+
+
+/* =======================
+   IMAGEN DE REFERENCIA
+   ======================= */
+
+.imagen-referencia {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 15px;
+    border: 2px solid #eee1f5;
+    margin-top: 12px;
+}
+
+.texto-ayuda {
+    display: block;
+    margin-top: 6px;
+    color: #888;
+    font-size: 12px;
+}
+
+
+/* =======================
+   SELECT DE ESTADO
+   ======================= */
+
+.estado-select {
+    width: 100%;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+}
+
+.estado-select.pendiente {
+    background: #fff4c2;
+    color: #9c7a00;
+}
+
+.estado-select.en-preparación,
+.estado-select.en-preparacion {
+    background: #dfefff;
+    color: #0d6efd;
+}
+
+.estado-select.listo-para-entregar {
+    background: #efe4ff;
+    color: #7b4db3;
+}
+
+.estado-select.entregado {
+    background: #d9f6df;
+    color: #2d8a44;
+}
+
+.estado-select:disabled {
+    background: #fde3e3;
+    color: #c0392b;
+    cursor: not-allowed;
+}
+
+
+/* =======================
+   SELECTOR DE IMAGEN
+   ======================= */
+
+.campo-imagen {
+    width: 100%;
+}
+
+.campo-imagen > label:first-child {
+    margin-bottom: 8px;
+}
+
+.selector-imagen {
+    width: 100%;
+    min-height: 90px;
+    border: 2px dashed #d8c6e5;
+    border-radius: 12px;
+    background: #faf7fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.selector-imagen:hover {
+    border-color: #9b78ad;
+    background: #f6eff9;
+    transform: translateY(-1px);
+}
+
+.selector-imagen:active {
+    transform: translateY(0);
+}
+
+.selector-imagen input[type="file"] {
+    display: none;
+}
+
+.icono-imagen {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #eadcf1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    flex-shrink: 0;
+}
+
+.texto-imagen {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.texto-imagen strong {
+    color: #66517a;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.texto-imagen small {
+    color: #8b8191;
+    font-size: 12px;
+}
+
+.nombre-imagen {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f0f7f1;
+    color: #55745a;
+    font-size: 13px;
+    border: 1px solid #d5e7d7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =======================
+   BOTÓN DESCARGAR PDF
+   ======================= */
+
+.btn-descargar-pdf {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin: 20px;
+    padding: 10px 20px;
+
+    border: none;
+    border-radius: 25px;
+
+    background: #b899c8;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(179, 154, 201, 0.25);
+
+    transition:
+        background 0.25s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.btn-descargar-pdf:hover {
+    background: #a782ba;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(179, 154, 201, 0.35);
+}
+
+.btn-descargar-pdf:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(179, 154, 201, 0.25);
+}
+
+.btn-descargar-pdf:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =======================
+   RESPONSIVE
+   ======================= */
+
+@media (max-width: 768px) {
+
+    .contenedor-pedidos {
+        padding: 20px;
+    }
+
+    .encabezado-modulo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .tabla-pedidos,
+    .tabla-detalle {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .grid-pedido,
+    .grid-producto,
+    .grid-totales {
+        grid-template-columns: 1fr;
+    }
+
+    .botones-modal {
+        flex-direction: column;
+    }
+
+    .btn-guardar,
+    .btn-cancelar {
+        width: 100%;
+    }
+
+    .btn-descargar-pdf {
+        width: calc(100% - 40px);
+        margin: 20px;
+    }
+}

@@ -87,6 +87,20 @@ export const editarCliente = async (id, cliente) => {
     return datos;
 };
 
+//historial por cliente
+
+export async function obtenerHistorialPedidos(idcliente) {
+
+    const respuesta = await fetch(
+        `${API_CLIENTES}/${idcliente}/historial-pedidos`
+    );
+
+    if (!respuesta.ok) {
+        throw new Error("Error al obtener el historial de pedidos.");
+    }
+
+    return await respuesta.json();
+};
 
 // Eliminar cliente
 export const eliminarCliente = async (id) => {

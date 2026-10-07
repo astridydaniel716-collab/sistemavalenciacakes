@@ -193,6 +193,95 @@
     font-size: 14px;
 }
 
+/* =====================================
+   ALERTAS PEDIDOS DASHBOARD
+===================================== */
+
+.alertas-dashboard{
+
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:30px;
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+
+}
+
+.titulo-alerta{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#765b80;
+    margin-bottom:20px;
+
+}
+
+.titulo-alerta svg{
+
+    color:#B899C8;
+    font-size:22px;
+
+}
+
+.titulo-alerta h3{
+
+    margin:0;
+
+}
+
+.tarjeta-alerta{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#FFF8E8;
+    border-left:6px solid #F4C15D;
+    border-radius:15px;
+    padding:15px 18px;
+    margin-bottom:12px;
+
+}
+
+.info-alerta{
+
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+
+}
+
+.info-alerta strong{
+
+    color:#765b80;
+
+}
+
+.info-alerta span{
+
+    font-size:13px;
+    color:#666;
+
+}
+
+.badge-alerta{
+
+    background:#F4C15D;
+    color:#7a5200;
+    padding:8px 14px;
+    border-radius:20px;
+    font-weight:600;
+    font-size:13px;
+
+}
+
+.sin-alertas{
+
+    color:#888;
+    font-style:italic;
+    text-align:center;
+
+}
 
 /* =========================
    RESPONSIVE

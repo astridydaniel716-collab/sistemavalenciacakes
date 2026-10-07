@@ -479,6 +479,110 @@
     border-radius:10px;
 }
 
+.btn-historial {
+    background: #e9ddf2;
+    color: #765b80;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-historial:hover {
+    background: #d9c6e6;
+}
+
+.modal-historial {
+    background: white;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 20px;
+    padding: 25px;
+}
+
+.subtitulo-historial {
+    margin: 4px 0 0;
+    color: #888;
+    font-size: 14px;
+}
+
+.tabla-historial-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.tabla-historial {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-historial th,
+.tabla-historial td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.tabla-historial th {
+    background: #f7f1fa;
+    color: #765b80;
+    font-weight: 600;
+}
+
+.historial-cargando,
+.historial-vacio {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+
+.estado-historial {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.estado-historial.pendiente {
+    background: #fff4c2;
+    color: #9c7a00;
+}
+
+.estado-historial.en-preparación,
+.estado-historial.en-preparacion {
+    background: #dfefff;
+    color: #0d6efd;
+}
+
+.estado-historial.listo-para-entregar {
+    background: #efe4ff;
+    color: #7b4db3;
+}
+
+.estado-historial.entregado {
+    background: #d9f6df;
+    color: #2d8a44;
+}
+
+.estado-historial.cancelado {
+    background: #fde3e3;
+    color: #c0392b;
+}
+
+.fila-pedido-historial {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.fila-pedido-historial:hover {
+    background-color: #f8f1fb;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
