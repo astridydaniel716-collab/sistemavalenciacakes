@@ -8,7 +8,7 @@ import {
     eliminarProveedor
 } from '../services/proveedoresService';
 
-import './Proveedores.css';
+import '../css/Proveedores.css';
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 
 

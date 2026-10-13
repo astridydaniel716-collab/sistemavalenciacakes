@@ -1,10 +1,11 @@
+import apiFetch from './api';
 const API_CLIENTES = 'http://localhost:3330/app/clientes';
 
 
 // Obtener todos los clientes
 export const obtenerClientes = async () => {
 
-    const respuesta = await fetch(`${API_CLIENTES}/todos`);
+    const respuesta = await apiFetch(`${API_CLIENTES}/todos`);
 
     if (!respuesta.ok) {
         throw new Error('Error al obtener los clientes');
@@ -17,7 +18,7 @@ export const obtenerClientes = async () => {
 // Registrar cliente
 export const crearCliente = async (cliente) => {
 
-    const respuesta = await fetch(`${API_CLIENTES}/crear`, {
+    const respuesta = await apiFetch(`${API_CLIENTES}/crear`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ export const crearCliente = async (cliente) => {
 // Buscar clientes
 export const buscarClientes = async (termino) => {
 
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${API_CLIENTES}/buscar?termino=${encodeURIComponent(termino)}`
     );
 
@@ -55,7 +56,7 @@ export const buscarClientes = async (termino) => {
 // Obtener cliente por ID
 export const obtenerClientePorId = async (id) => {
 
-    const respuesta = await fetch(`${API_CLIENTES}/${id}`);
+    const respuesta = await apiFetch(`${API_CLIENTES}/${id}`);
 
     const datos = await respuesta.json();
 
@@ -70,7 +71,7 @@ export const obtenerClientePorId = async (id) => {
 // Editar cliente
 export const editarCliente = async (id, cliente) => {
 
-    const respuesta = await fetch(`${API_CLIENTES}/editar/${id}`, {
+    const respuesta = await apiFetch(`${API_CLIENTES}/editar/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ export const editarCliente = async (id, cliente) => {
 
 export async function obtenerHistorialPedidos(idcliente) {
 
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${API_CLIENTES}/${idcliente}/historial-pedidos`
     );
 
@@ -105,7 +106,7 @@ export async function obtenerHistorialPedidos(idcliente) {
 // Eliminar cliente
 export const eliminarCliente = async (id) => {
 
-    const respuesta = await fetch(`${API_CLIENTES}/eliminar/${id}`, {
+    const respuesta = await apiFetch(`${API_CLIENTES}/eliminar/${id}`, {
         method: 'DELETE'
     });
 

@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import "./Pedidos.css";
+import "../css/Pedidos.css";
 
 
 const formularioInicial = {
@@ -238,7 +238,7 @@ async function descargarDetallePedido() {
 
     try {
 
-        const doc = new jsPDF();
+    const doc = new jsPDF();
 
         // COLORES VALENCIA CAKES
        

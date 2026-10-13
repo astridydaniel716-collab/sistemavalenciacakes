@@ -1,10 +1,11 @@
+import apiFetch from './api';
 const API_PROVEEDORES = 'http://localhost:3330/app/proveedores';
 
 
 // Obtener todos los proveedores
 export const obtenerProveedores = async () => {
 
-    const respuesta = await fetch(`${API_PROVEEDORES}/todos`);
+    const respuesta = await apiFetch(`${API_PROVEEDORES}/todos`);
 
     if (!respuesta.ok) {
         throw new Error('Error al obtener los proveedores');
@@ -17,7 +18,7 @@ export const obtenerProveedores = async () => {
 // Registrar proveedor
 export const crearProveedor = async (proveedor) => {
 
-    const respuesta = await fetch(`${API_PROVEEDORES}/crear`, {
+    const respuesta = await apiFetch(`${API_PROVEEDORES}/crear`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ export const crearProveedor = async (proveedor) => {
 // Buscar proveedor
 export const buscarProveedores = async (termino) => {
 
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${API_PROVEEDORES}/buscar?termino=${encodeURIComponent(termino)}`
     );
 
@@ -55,7 +56,7 @@ export const buscarProveedores = async (termino) => {
 // Obtener proveedor por ID
 export const obtenerProveedorPorId = async (id) => {
 
-    const respuesta = await fetch(`${API_PROVEEDORES}/${id}`);
+    const respuesta = await apiFetch(`${API_PROVEEDORES}/${id}`);
 
     const datos = await respuesta.json();
 
@@ -70,7 +71,7 @@ export const obtenerProveedorPorId = async (id) => {
 // Editar proveedor
 export const editarProveedor = async (id, proveedor) => {
 
-    const respuesta = await fetch(`${API_PROVEEDORES}/editar/${id}`, {
+    const respuesta = await apiFetch(`${API_PROVEEDORES}/editar/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ export const editarProveedor = async (id, proveedor) => {
 // Eliminar proveedor
 export const eliminarProveedor = async (id) => {
 
-    const respuesta = await fetch(`${API_PROVEEDORES}/eliminar/${id}`, {
+    const respuesta = await apiFetch(`${API_PROVEEDORES}/eliminar/${id}`, {
         method: 'DELETE'
     });
 

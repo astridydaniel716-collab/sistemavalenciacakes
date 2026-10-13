@@ -113,7 +113,7 @@ const PedidoModelo = {
             FROM pedidos p
             INNER JOIN clientes c
                 ON p.idcliente = c.idcliente
-            ORDER BY p.fecha_entrega ASC, p.hora_entrega ASC;
+            ORDER BY p.fecha_entrega DESC;
         `;
 
         const resultado = await Conexion.query(sql);

@@ -1,29 +1,33 @@
+
 const express = require('express');
 const router = express.Router();
 
 const PedidoControlador = require('../controllers/pedidosControlador');
 const upload = require('../config/Multer');
+const verificarToken = require('../middleware/autenticacion');
 
-// CREAR PEDIDO
+// Todas las rutas de pedidos requieren autenticación.
+router.use(verificarToken);
+
+// Crear pedido
 router.post('/crear',upload.single('imagen_referencia'),PedidoControlador.crearPedido);
 
-// OBTENER TODOS
-router.get('/todos',PedidoControlador.obtenerPedidos);
+// Obtener todos
+router.get('/todos', PedidoControlador.obtenerPedidos);
 
-// BUSCAR
-router.get('/buscar',PedidoControlador.buscarPedidos);
+// Buscar
+router.get('/buscar', PedidoControlador.buscarPedidos);
 
-// EDITAR PEDIDO
+// Editar pedido
 router.put('/editar/:id',upload.single('imagen_referencia'),PedidoControlador.editarPedido);
 
-// ACTUALIZAR ESTADO
-router.put('/estado/:id',PedidoControlador.actualizarEstado);
+// Actualizar estado
+router.put('/estado/:id', PedidoControlador.actualizarEstado);
 
-// CANCELAR PEDIDO
-router.put('/cancelar/:id',PedidoControlador.cancelarPedido);
+// Cancelar pedido
+router.put('/cancelar/:id', PedidoControlador.cancelarPedido);
 
-
-// OBTENER PEDIDO POR ID
-router.get('/:id',PedidoControlador.obtenerPedidoPorId);
+// Obtener pedido por ID
+router.get('/:id', PedidoControlador.obtenerPedidoPorId);
 
 module.exports = router;

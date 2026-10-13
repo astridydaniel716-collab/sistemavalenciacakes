@@ -1,8 +1,12 @@
-const express = require('express');
 
+const express = require('express');
 const router = express.Router();
 
 const ProveedorControlador = require('../controllers/proveedoresControlador');
+const verificarToken = require('../middleware/autenticacion');
+
+// Todas las rutas de proveedores requieren autenticación.
+router.use(verificarToken);
 
 // Registrar proveedor
 router.post('/crear', ProveedorControlador.crearProveedor);
@@ -21,6 +25,5 @@ router.put('/editar/:id', ProveedorControlador.editarProveedor);
 
 // Eliminar proveedor
 router.delete('/eliminar/:id', ProveedorControlador.eliminarProveedor);
-
 
 module.exports = router;

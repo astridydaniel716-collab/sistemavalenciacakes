@@ -1,3 +1,4 @@
+import apiFetch from './api';
 const API_PEDIDOS = "http://localhost:3330/app/pedidos";
 
 const pedidosService = {
@@ -5,7 +6,7 @@ const pedidosService = {
     // Obtener todos los pedidos
     async obtenerTodos() {
 
-        const respuesta = await fetch(`${API_PEDIDOS}/todos`);
+        const respuesta = await apiFetch(`${API_PEDIDOS}/todos`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener los pedidos.");
@@ -17,7 +18,7 @@ const pedidosService = {
     // Buscar pedidos
     async buscar(termino) {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_PEDIDOS}/buscar?termino=${encodeURIComponent(termino)}`
         );
 
@@ -63,7 +64,7 @@ const pedidosService = {
             );
         }
 
-        const respuesta = await fetch(`${API_PEDIDOS}/crear`, {
+        const respuesta = await apiFetch(`${API_PEDIDOS}/crear`, {
             method: "POST",
             body: formulario
         });
@@ -74,7 +75,7 @@ const pedidosService = {
     // Obtener pedido por ID
     async obtenerPorId(id) {
 
-        const respuesta = await fetch(`${API_PEDIDOS}/${id}`);
+        const respuesta = await apiFetch(`${API_PEDIDOS}/${id}`);
 
         if (!respuesta.ok) {
             throw new Error("Pedido no encontrado.");
@@ -111,7 +112,7 @@ const pedidosService = {
         );
     }
 
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
         `${API_PEDIDOS}/editar/${id}`,
         {
             method: "PUT",
@@ -133,7 +134,7 @@ const pedidosService = {
     // Actualizar estado
     async actualizarEstado(id, estado) {
 
-        const respuesta = await fetch(`${API_PEDIDOS}/estado/${id}`, {
+        const respuesta = await apiFetch(`${API_PEDIDOS}/estado/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -147,7 +148,7 @@ const pedidosService = {
     // Obtener pedidos próximos a entregar
     async obtenerProximos() {
 
-        const respuesta = await fetch(`${API_PEDIDOS}/todos`);
+        const respuesta = await apiFetch(`${API_PEDIDOS}/todos`);
 
         if (!respuesta.ok) {
             throw new Error("Error al obtener pedidos.");
@@ -184,7 +185,7 @@ const pedidosService = {
     // Cancelar pedido
     async cancelar(id) {
 
-        const respuesta = await fetch(`${API_PEDIDOS}/cancelar/${id}`, {
+        const respuesta = await apiFetch(`${API_PEDIDOS}/cancelar/${id}`, {
             method: "PUT"
         });
 

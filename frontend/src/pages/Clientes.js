@@ -10,7 +10,7 @@ import {
     eliminarCliente
 } from '../services/clientesService';
 
-import './Clientes.css';
+import '../css/Clientes.css';
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import productoService from "../services/productoService"; // Servicio de productos
 
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import "./Productos.css";
+import "../css/Productos.css";
 
 
 // Opciones disponibles para los productos

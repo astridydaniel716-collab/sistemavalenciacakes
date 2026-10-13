@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Dashboard.css';
+import '../css/Dashboard.css';
 
 import { FaSignOutAlt, FaBell } from 'react-icons/fa';
 import pedidosService from '../services/pedidosService';
 
-function Dashboard() {
+function Dashboard({cerrarSesion: cerrarSesionApp}) {
 
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -18,11 +18,10 @@ function Dashboard() {
         cargarPedidosProximos();
     }, []);
 
-    const cerrarSesion = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
-        navigate('/');
-    };
+    const handleLogout = () => {
+    cerrarSesionApp();
+    navigate('/', { replace: true });
+};
 
     // Obtener pedidos próximos a entregar
     async function cargarPedidosProximos() {
@@ -99,7 +98,7 @@ function Dashboard() {
 
                     <button
                         className="logout-button"
-                        onClick={cerrarSesion}
+                        onClick={handleLogout}
                     >
                         Cerrar sesión
                         <FaSignOutAlt style={{ marginLeft: "10px" }} />

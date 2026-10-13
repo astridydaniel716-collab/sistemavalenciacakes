@@ -2,7 +2,7 @@ import { iniciarSesion } from '../services/usuarioService'; // Servicio de auten
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({ alIniciarSesion }) {
     const navigate = useNavigate();
 
     // Estados para usuario y contraseña
@@ -21,14 +21,16 @@ function Login() {
             console.log('Login exitoso:', datos);
 
             // Guardar token y datos del usuario
+            if (!datos.token) {
+            throw new Error('El servidor no devolvió un token de autenticación.');
+        }
             localStorage.setItem('token', datos.token);
             localStorage.setItem('usuario', JSON.stringify(datos.usuario));
 
-            alert('Inicio de sesión exitoso');
-
+            
             // Redirigir al sistema
-            window.location.href = '/';
-            navigate('/dashboard');
+            alIniciarSesion(datos.token);
+            navigate('/dashboard', { replace:true });
 
         } catch (error) {
             console.error(error);
