@@ -153,16 +153,18 @@ const verHistorial = async (cliente) => {
 };
 
 // Abrir detalle del pedido desde el historial
-const abrirPedidoDesdeHistorial = (idpedido) => {
 
+const abrirPedidoDesdeHistorial = (idpedido) => {
     setMostrarHistorial(false);
 
     navigate('/Pedidos', {
         state: {
-            abrirPedido: idpedido
+            abrirPedido: idpedido,
+            origen: 'historialCliente'
         }
     });
 };
+
 
     // Guardar cliente
     const guardarCliente = async (e) => {

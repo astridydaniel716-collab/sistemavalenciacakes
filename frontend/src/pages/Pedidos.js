@@ -30,18 +30,14 @@ function Pedidos() {
     const [pedidos, setPedidos] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [productos, setProductos] = useState([]);
-
     const [busqueda, setBusqueda] = useState("");
-
+    const [filtroEstado, setFiltroEstado] = useState("");
+    const [filtroFecha, setFiltroFecha] = useState("");
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarDetalle, setMostrarDetalle] = useState(false);
-
     const [modoEdicion, setModoEdicion] = useState(false);
-
     const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
-
     const [formulario, setFormulario] = useState(formularioInicial);
-
     const detalleInicial = {
     idproducto: "",
     descripcion: "",
@@ -51,9 +47,9 @@ function Pedidos() {
     precio_base: 0,
     precio_unitario: 0,
     subtotal: 0
-};
-
-const [productoActual, setProductoActual] = useState(detalleInicial);
+    };
+    const [origenDetalle, setOrigenDetalle] = useState(null);
+    const [productoActual, setProductoActual] = useState(detalleInicial);
 
     useEffect(() => {
 
@@ -78,19 +74,19 @@ const [productoActual, setProductoActual] = useState(detalleInicial);
         }
 
     }
-    useEffect(() => {
-
+  
+useEffect(() => {
     if (location.state?.abrirPedido) {
+        setOrigenDetalle(location.state.origen || null);
 
         abrirDetalleDesdeDashboard(location.state.abrirPedido);
 
         // Limpiar el state para que no vuelva a abrir el modal
         navigate("/Pedidos", { replace: true });
-
     }
-
 }, [location.state, navigate]);
 
+//CARGAR CLIENTES
     async function cargarClientes() {
 
         try {
@@ -146,6 +142,30 @@ const [productoActual, setProductoActual] = useState(detalleInicial);
 
     }
 
+    
+function obtenerPedidosFiltrados() {
+    if (filtroEstado) {
+        return pedidos.filter(
+            pedido => pedido.estado === filtroEstado
+        );
+    }
+
+    if (filtroFecha) {
+        return pedidos.filter(pedido => {
+            if (!pedido.fecha_entrega) return false;
+
+            const fecha = String(pedido.fecha_entrega).slice(0, 10);
+
+            return fecha === filtroFecha;
+        });
+    }
+
+    return pedidos;
+}
+
+const pedidosFiltrados = obtenerPedidosFiltrados();
+
+
     function abrirNuevoPedido() {
 
         setModoEdicion(false);
@@ -190,6 +210,16 @@ const [productoActual, setProductoActual] = useState(detalleInicial);
         }
 
     }
+
+    //cerrar detalle del pedido desde el historial del cliente
+const cerrarDetallePedido = () => {
+    setMostrarDetalle(false);
+
+    if (origenDetalle === 'historialCliente') {
+        setOrigenDetalle(null);
+        navigate('/Clientes', { replace: true });
+    }
+};
 
 // CONVERTIR IMAGEN A BASE64 PARA EL PDF
 
@@ -1059,48 +1089,69 @@ function cambiarAnticipo(e) {
 
 // GUARDAR PEDIDO
 
-async function guardarPedido(e) {
 
+async function guardarPedido(e) {
     e.preventDefault();
+
+    if (!formulario.fecha_entrega) {
+        alert("Debe seleccionar la fecha de entrega.");
+        return;
+    }
 
     if (formulario.detalle.length === 0) {
         alert("Debe agregar al menos un producto.");
         return;
     }
 
+    const total = Number(formulario.total);
+    const anticipo = Number(formulario.anticipo || 0);
+
+    if (!Number.isFinite(total) || total <= 0) {
+        alert("El total del pedido debe ser mayor que cero.");
+        return;
+    }
+
+    if (!Number.isFinite(anticipo) || anticipo < 0) {
+        alert("El anticipo no puede ser negativo.");
+        return;
+    }
+
+    if (anticipo > total) {
+        alert("El anticipo no puede superar el total del pedido.");
+        return;
+    }
+
     try {
-
         if (modoEdicion) {
-
             await pedidosService.editar(
                 pedidoSeleccionado.idpedido,
                 formulario
             );
 
             alert("Pedido actualizado correctamente.");
-
         } else {
-
             await pedidosService.crear(formulario);
 
             alert("Pedido registrado correctamente.");
-
         }
 
+        // Limpiar y cerrar solo después de guardar correctamente
         setMostrarModal(false);
         setFormulario(formularioInicial);
         setProductoActual(detalleInicial);
 
-        cargarPedidos();
+        await cargarPedidos();
 
     } catch (error) {
+        console.error("Error al guardar el pedido:", error);
 
-        console.error(error);
-        alert("Error al guardar el pedido.");
-
+        alert(
+            error.message ||
+            "No se pudo guardar el pedido. Los datos del formulario se conservan."
+        );
     }
-
 }
+
     return (
 
         <div className="contenedor-pedidos">
@@ -1118,16 +1169,61 @@ async function guardarPedido(e) {
 
             </div>
 
-            <div className="barra-busqueda">
+            
+<div className="barra-busqueda">
+    <input
+        type="text"
+        placeholder="Buscar por nombre o teléfono del cliente..."
+        value={busqueda}
+        onChange={(e) => {
+            setFiltroEstado("");
+            setFiltroFecha("");
+            buscarPedido(e.target.value);
+        }}
+    />
 
-                <input
-                    type="text"
-                    placeholder="Buscar por cliente, teléfono, fecha de entrega o estado..."
-                    value={busqueda}
-                    onChange={(e) => buscarPedido(e.target.value)}
-                />
+    <select
+        value={filtroEstado}
+        onChange={(e) => {
+            setFiltroEstado(e.target.value);
+            setFiltroFecha("");
+            setBusqueda("");
+            cargarPedidos();
+        }}
+    >
+        <option value="">Filtrar por estado</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="En preparación">En preparación</option>
+        <option value="Listo para entregar">Listo para entregar</option>
+        <option value="Entregado">Entregado</option>
+        <option value="Cancelado">Cancelado</option>
+    </select>
 
-            </div>
+    <input
+        type="date"
+        value={filtroFecha}
+        onChange={(e) => {
+            setFiltroFecha(e.target.value);
+            setFiltroEstado("");
+            setBusqueda("");
+            cargarPedidos();
+        }}
+        aria-label="Filtrar por fecha de entrega"
+    />
+
+    <button
+        type="button"
+        onClick={() => {
+            setFiltroEstado("");
+            setFiltroFecha("");
+            setBusqueda("");
+            cargarPedidos();
+        }}
+    >
+        Limpiar filtros
+    </button>
+</div>
+
 
             <table className="tabla-pedidos">
 
@@ -1149,7 +1245,7 @@ async function guardarPedido(e) {
 
                 <tbody>
 
-                    {pedidos.length === 0 ? (
+                    {pedidosFiltrados.length === 0 ? (
 
                         <tr>
                             <td colSpan="7">
@@ -1159,7 +1255,7 @@ async function guardarPedido(e) {
 
                     ) : (
 
-                        pedidos.map((pedido) => (
+                        pedidosFiltrados.map((pedido) => (
 
                             <tr key={pedido.idpedido}>
 
@@ -1520,6 +1616,8 @@ async function guardarPedido(e) {
             <input
                 type="number"
                 name="valor_extras"
+                min="0"
+                step="1"
                 value={productoActual.valor_extras}
                 onChange={actualizarProducto}
             />
@@ -1667,6 +1765,8 @@ async function guardarPedido(e) {
 
         <input
             type="number"
+            min="0"
+            step="1"
             value={formulario.anticipo}
             onChange={cambiarAnticipo}
         />
@@ -1844,12 +1944,11 @@ async function guardarPedido(e) {
             </button>
 
             <button
-                type="button" className="btn-cerrar" onClick={() => setMostrarDetalle(false)}>
+                    type="button" className="btn-cerrar" onClick={cerrarDetallePedido}>
                 Cerrar
             </button>
             </div>
             
-
         </div>
 
     </div>

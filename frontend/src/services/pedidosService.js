@@ -69,8 +69,16 @@ const pedidosService = {
             body: formulario
         });
 
-        return await respuesta.json();
-    },
+        const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(
+            datos.mensaje || "Error al registrar el pedido."
+        );
+    }
+
+    return datos;
+},
 
     // Obtener pedido por ID
     async obtenerPorId(id) {
@@ -132,18 +140,30 @@ const pedidosService = {
 },
 
     // Actualizar estado
-    async actualizarEstado(id, estado) {
-
-        const respuesta = await apiFetch(`${API_PEDIDOS}/estado/${id}`, {
+    
+async actualizarEstado(id, estado) {
+    const respuesta = await apiFetch(
+        `${API_PEDIDOS}/estado/${id}`,
+        {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ estado })
-        });
+        }
+    );
 
-        return await respuesta.json();
-    },
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(
+            datos.mensaje || "Error al actualizar el estado del pedido."
+        );
+    }
+
+    return datos;
+},
+
 
     // Obtener pedidos próximos a entregar
     async obtenerProximos() {
@@ -183,14 +203,25 @@ const pedidosService = {
     },
 
     // Cancelar pedido
-    async cancelar(id) {
-
-        const respuesta = await apiFetch(`${API_PEDIDOS}/cancelar/${id}`, {
+    
+async cancelar(id) {
+    const respuesta = await apiFetch(
+        `${API_PEDIDOS}/cancelar/${id}`,
+        {
             method: "PUT"
-        });
+        }
+    );
 
-        return await respuesta.json();
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(
+            datos.mensaje || "Error al cancelar el pedido."
+        );
     }
+
+    return datos;
+}
 
 };
 

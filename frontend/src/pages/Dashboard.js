@@ -5,7 +5,7 @@ import '../css/Dashboard.css';
 import { FaSignOutAlt, FaBell } from 'react-icons/fa';
 import pedidosService from '../services/pedidosService';
 
-function Dashboard({cerrarSesion: cerrarSesionApp}) {
+function Dashboard({cerrarSesionApp}) {
 
     const navigate = useNavigate();
     const usuario = JSON.parse(localStorage.getItem('usuario'));

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import {
     BrowserRouter,
     Routes,
@@ -13,18 +14,66 @@ import Proveedores from './pages/Proveedores';
 import Productos from './pages/Productos';
 import Pedidos from './pages/Pedidos';
 
+// Comprueba si el JWT existe y no ha vencido.
+function obtenerTokenValido() {
+    const token = localStorage.getItem('token');
+
+    if (!token) return null;
+
+    try {
+        const partes = token.split('.');
+        if (partes.length !== 3) throw new Error('Token inválido');
+
+        const payload = JSON.parse(
+            atob(
+                partes[1]
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/')
+            )
+        );
+
+        if (
+            typeof payload.exp !== 'number' ||
+            payload.exp * 1000 <= Date.now()
+        ) {
+            throw new Error('Token vencido');
+        }
+
+        return token;
+    } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        return null;
+    }
+}
+
 function App() {
-    const [token, setToken] = useState(
-        () => localStorage.getItem('token')
-    );
+    const [token, setToken] = useState(obtenerTokenValido);
 
     const cerrarSesion = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
         setToken(null);
-   };
+    };
 
-<Login alIniciarSesion={setToken} />
+    useEffect(() => {
+        const manejarSesionExpirada = () => {
+            cerrarSesion();
+        };
+
+        window.addEventListener(
+            'sesionExpirada',
+            manejarSesionExpirada
+        );
+
+        return () => {
+            window.removeEventListener(
+                'sesionExpirada',
+                manejarSesionExpirada
+            );
+        };
+    }, []);
+
     return (
         <BrowserRouter>
             <Routes>
@@ -41,7 +90,7 @@ function App() {
                     path="/dashboard"
                     element={
                         token
-                            ? <Dashboard cerrarSesion={cerrarSesion}/>
+                            ? <Dashboard cerrarSesionApp={cerrarSesion} />
                             : <Navigate to="/" replace />
                     }
                 />

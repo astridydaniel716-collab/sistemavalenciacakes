@@ -1,12 +1,10 @@
-
-const apiFetch = async (url, opciones = {}) => {
+    const apiFetch = async (url, opciones = {}) => {
     const token = localStorage.getItem('token');
 
     const headers = {
         ...opciones.headers
     };
 
-    // Agregar el token a las solicitudes autenticadas.
     if (token) {
         headers.Authorization = `Bearer ${token}`;
     }
@@ -15,6 +13,15 @@ const apiFetch = async (url, opciones = {}) => {
         ...opciones,
         headers,
     });
+
+    if (respuesta.status === 401 && token) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+
+        window.dispatchEvent(
+            new Event('sesionExpirada')
+        );
+    }
 
     return respuesta;
 };

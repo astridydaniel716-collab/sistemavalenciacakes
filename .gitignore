@@ -22,3 +22,6 @@ npm-debug.log*
 # Archivos del sistema
 .DS_Store
 Thumbs.db
+
+# Imagen temporal usada para probar la carga de pedidos
+backend/uploads/pedido-1791935926874.jpg

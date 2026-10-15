@@ -10,7 +10,8 @@ jest.mock('../models/clientesModelo', () => ({
 
 // Simular el modelo de pedidos
 jest.mock('../models/pedidosModelo', () => ({
-    obtenerPedidos: jest.fn()
+    obtenerPedidos: jest.fn(),
+    cancelarPedido: jest.fn()
 }));
 
 describe('Pruebas de manejo de errores', () => {
@@ -92,6 +93,54 @@ describe('Pruebas de manejo de errores', () => {
 
         expect(res.json).toHaveBeenCalledWith({
             mensaje: 'Error al obtener los pedidos.'
+        });
+
+        
+    });
+
+    // B-PED-CAN-01: Rechazar cancelación no permitida
+    test('responde con 400 cuando el pedido no está pendiente', async () => {
+        const PedidoModelo = require('../models/pedidosModelo');
+        const PedidoControlador = require('../controllers/pedidosControlador');
+
+        PedidoModelo.cancelarPedido.mockRejectedValue(
+            new Error('Solo se pueden cancelar pedidos que estén pendientes.')
+        );
+
+        const req = { params: { id: '1' } };
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+
+        await PedidoControlador.cancelarPedido(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            mensaje: 'Solo se pueden cancelar pedidos que estén pendientes.'
+        });
+    });
+
+    // B-PED-CAN-02: Manejar error inesperado
+    test('responde con 500 cuando ocurre un error inesperado al cancelar', async () => {
+        const PedidoModelo = require('../models/pedidosModelo');
+        const PedidoControlador = require('../controllers/pedidosControlador');
+
+        PedidoModelo.cancelarPedido.mockRejectedValue(
+            new Error('Error de conexión con la base de datos')
+        );
+
+        const req = { params: { id: '1' } };
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+
+        await PedidoControlador.cancelarPedido(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            mensaje: 'Error al cancelar el pedido.'
         });
     });
 

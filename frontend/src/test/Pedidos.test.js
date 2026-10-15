@@ -699,11 +699,12 @@ expect(jsPDF).toHaveBeenCalled();
             /* -----------------------------------------
                SELECTOR DE ESTADO
             ----------------------------------------- */
-            const selectorEstado =
-                screen.getByRole("combobox");
-            expect(
-                selectorEstado
-            ).toBeInTheDocument();
+           const filaPedido = screen.getByRole("row", {
+                name: /Cliente de prueba/
+            });
+
+            const selectorEstado =
+                 within(filaPedido).getByRole("combobox");
             /* -----------------------------------------
                ESTADO INICIAL
             ----------------------------------------- */

@@ -735,3 +735,100 @@
         margin: 20px;
     }
 }
+
+
+/* =======================
+   FILTROS DE BÚSQUEDA
+   ======================= */
+
+.barra-busqueda {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Campo de búsqueda y fecha */
+.barra-busqueda input {
+    flex: 1;
+    min-width: 180px;
+    width: auto;
+    box-sizing: border-box;
+    padding: 12px 15px;
+    border: 1px solid #ddd3e0;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    color: #555;
+    background: #fff;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+/* Selector de estado */
+.barra-busqueda select {
+    flex: 0 1 220px;
+    min-width: 180px;
+    padding: 12px 15px;
+    border: 1px solid #ddd3e0;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    color: #765b80;
+    background: #faf8fb;
+    cursor: pointer;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+/* Efecto al seleccionar un campo */
+.barra-busqueda input:focus,
+.barra-busqueda select:focus {
+    border-color: #b899c8;
+    box-shadow: 0 0 0 3px rgba(184, 153, 200, 0.15);
+}
+
+/* Botón para limpiar los filtros */
+.barra-busqueda button {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    background: #eee1f5;
+    color: #765b80;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.25s;
+}
+
+.barra-busqueda button:hover {
+    background: #b899c8;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Adaptación para móviles */
+@media (max-width: 768px) {
+    .barra-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .barra-busqueda input,
+    .barra-busqueda select,
+    .barra-busqueda button {
+        width: 100%;
+        min-width: 0;
+        flex: auto;
+        box-sizing: border-box;
+    }
+}

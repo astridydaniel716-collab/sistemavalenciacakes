@@ -24,35 +24,52 @@ jest.mock("../services/pedidosService", () => ({
 }));
 
 describe("Pruebas del módulo Dashboard", () => {
+
+const mockCerrarSesionApp = jest.fn(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+});
+
     const mockNavigate = jest.fn();
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+    
+beforeEach(() => {
+    jest.clearAllMocks();
 
-        useNavigate.mockReturnValue(mockNavigate);
-
-        localStorage.setItem(
-            "usuario",
-            JSON.stringify({
-                nombre: "Administrador de prueba"
-            })
-        );
-
-        pedidosService.obtenerProximos.mockResolvedValue([]);
+    mockCerrarSesionApp.mockImplementation(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
     });
+
+    useNavigate.mockReturnValue(mockNavigate);
+
+    localStorage.setItem(
+        "usuario",
+        JSON.stringify({
+            nombre: "Administrador de prueba"
+        })
+    );
+
+    pedidosService.obtenerProximos.mockResolvedValue([]);
+});
+
 
     afterEach(() => {
         localStorage.clear();
     });
 
-    // Renderiza el componente y espera a que termine la carga inicial.
-    const renderDashboard = async () => {
-        render(<Dashboard />);
+   
+const renderDashboard = async () => {
+    render(
+        <Dashboard cerrarSesionApp={mockCerrarSesionApp} />
+    );
 
-        await act(async () => {
-            await Promise.resolve();
-        });
-    };
+    await act(async () => {
+        await Promise.resolve();
+    });
+};
+
+
 
     test("F-DASH-01 - muestra las cuatro tarjetas de módulos", async () => {
         await renderDashboard();
@@ -156,23 +173,25 @@ describe("Pruebas del módulo Dashboard", () => {
         }
     );
 
-    test(
-        "F-DASH-04 - cierra la sesión y regresa al inicio",
-        async () => {
-            localStorage.setItem("token", "token-de-prueba");
+    
+test("F-DASH-04 - cierra la sesión y regresa al inicio", async () => {
+    localStorage.setItem("token", "token-de-prueba");
 
-            await renderDashboard();
+    await renderDashboard();
 
-            fireEvent.click(
-                screen.getByRole("button", {
-                    name: /Cerrar sesión/i
-                })
-            );
-
-            expect(localStorage.getItem("token")).toBeNull();
-            expect(localStorage.getItem("usuario")).toBeNull();
-
-            expect(mockNavigate).toHaveBeenCalledWith("/");
-        }
+    fireEvent.click(
+        screen.getByRole("button", {
+            name: /Cerrar sesión/i
+        })
     );
+
+    expect(mockCerrarSesionApp).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem("token")).toBeNull();
+    expect(localStorage.getItem("usuario")).toBeNull();
+
+    expect(mockNavigate).toHaveBeenCalledWith("/", {
+        replace: true
+    });
+});
+
 });
