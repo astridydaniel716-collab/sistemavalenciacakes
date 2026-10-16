@@ -265,33 +265,36 @@ async editarPedido(req, res) {
         let detallePedido;
 
         try {
-
-            detallePedido = detalle
-                ? JSON.parse(detalle)
-                : [];
-
-        } catch (error) {
-
-            return res.status(400).json({
-                mensaje: "El detalle del pedido no tiene un formato válido."
-            });
-
-        }
+    if (Array.isArray(detalle)) {
+        detallePedido = detalle;
+    } else if (typeof detalle === "string") {
+        detallePedido = JSON.parse(detalle);
+    } else {
+        detallePedido = [];
+    }
+} catch (error) {
+    return res.status(400).json({
+        mensaje: "El detalle del pedido no tiene un formato válido."
+    });
+}
 
         // DATOS DEL PEDIDO
         
         const datosPedido = {
-            idcliente,
-            fecha_entrega,
-            hora_entrega,
-            tipo_entrega,
-            direccion_entrega,
-            observaciones,
-            total,
-            anticipo,
-            saldo,
-            detalle: detallePedido
-        };
+    idcliente,
+    fecha_entrega:
+        typeof fecha_entrega === "string"
+            ? fecha_entrega.slice(0, 10)
+            : fecha_entrega,
+    hora_entrega,
+    tipo_entrega,
+    direccion_entrega,
+    observaciones,
+    total,
+    anticipo,
+    saldo,
+    detalle: detallePedido
+};
 
         // Si se seleccionó una nueva imagen,
         
@@ -301,7 +304,7 @@ async editarPedido(req, res) {
 
        
         // ACTUALIZAR PEDIDO
-       
+   
         const pedido = await PedidoModelo.editarPedido(
             req.params.id,
             datosPedido

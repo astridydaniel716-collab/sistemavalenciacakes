@@ -550,6 +550,15 @@ async actualizarEstado(idpedido, nuevoEstado) {
 
     const estadoActual = resultadoActual.rows[0].estado;
 
+    if (
+    estadoActual === "Entregado" ||
+    estadoActual === "Cancelado"
+) {
+    throw new Error(
+        "No se pueden editar pedidos entregados o cancelados."
+    );
+}
+
     // Secuencia permitida
     const flujoEstados = [
         "Pendiente",

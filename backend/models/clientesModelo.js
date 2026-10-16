@@ -119,8 +119,8 @@ const obtenerHistorialPedidos = async (idcliente) => {
 
 
 // Eliminar cliente
-const eliminarCliente = async (id) => {
 
+const eliminarCliente = async (id) => {
     const resultado = await Conexion.query(
         `DELETE FROM clientes
          WHERE idcliente = $1
@@ -130,6 +130,7 @@ const eliminarCliente = async (id) => {
 
     return resultado.rows[0];
 };
+
 
 
 module.exports = {

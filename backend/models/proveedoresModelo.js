@@ -61,8 +61,8 @@ const buscarProveedores = async (termino) => {
 
 
 // Editar proveedor
-const editarProveedor = async (id, proveedor) => {
 
+const editarProveedor = async (id, proveedor) => {
     const {
         nombre,
         telefono,
@@ -78,7 +78,7 @@ const editarProveedor = async (id, proveedor) => {
              telefono = $2,
              correo = $3,
              direccion = $4,
-             productos_suministrados = $5,
+             productos_suministrados = COALESCE($5, productos_suministrados),
              observaciones = $6
          WHERE idproveedor = $7
          RETURNING *`,
@@ -87,7 +87,7 @@ const editarProveedor = async (id, proveedor) => {
             telefono,
             correo,
             direccion,
-            productos_suministrados,
+            productos_suministrados ?? null,
             observaciones,
             id
         ]
@@ -95,6 +95,7 @@ const editarProveedor = async (id, proveedor) => {
 
     return resultado.rows[0];
 };
+
 
 
 // Eliminar proveedor
