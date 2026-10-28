@@ -7,6 +7,9 @@ const pool = new Pool({
    password: Config.DB_PASSWORD,
    database: Config.DB_NAME,
    port: Config.DB_PORT,
+   ssl: process.env.NODE_ENV === 'production'
+      ? { rejectUnauthorized: true }
+      : false,
    max: 10,
    idleTimeoutMillis: 30000,
    connectionTimeoutMillis: 2000
