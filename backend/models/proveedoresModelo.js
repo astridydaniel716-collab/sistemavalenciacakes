@@ -111,6 +111,29 @@ const eliminarProveedor = async (id) => {
     return resultado.rows[0];
 };
 
+// Verificar si el teléfono o correo ya existen entre los proveedores
+const verificarDuplicados = async (telefono, correo, idExcluir = null) => {
+    const resultado = await Conexion.query(
+        `SELECT
+            EXISTS (
+                SELECT 1
+                FROM proveedores
+                WHERE telefono = $1
+                  AND ($3::integer IS NULL OR idproveedor <> $3)
+            ) AS telefono_duplicado,
+            EXISTS (
+                SELECT 1
+                FROM proveedores
+                WHERE correo IS NOT NULL
+                  AND LOWER(TRIM(correo)) = LOWER(TRIM($2))
+                  AND TRIM($2) <> ''
+                  AND ($3::integer IS NULL OR idproveedor <> $3)
+            ) AS correo_duplicado`,
+        [telefono, correo || '', idExcluir]
+    );
+
+    return resultado.rows[0];
+};
 
 module.exports = {
     crearProveedor,
@@ -118,5 +141,6 @@ module.exports = {
     obtenerProveedorPorId,
     buscarProveedores,
     editarProveedor,
-    eliminarProveedor
+    eliminarProveedor,
+    verificarDuplicados
 };

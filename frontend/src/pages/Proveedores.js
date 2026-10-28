@@ -26,7 +26,7 @@ function Proveedores() {
         telefono: '',
         correo: '',
         direccion: '',
-        producto_suministrado: '',
+        productos_suministrados: '',
         observaciones: ''
     });
 
@@ -103,7 +103,7 @@ function Proveedores() {
             telefono: proveedor.telefono || '',
             correo: proveedor.correo || '',
             direccion: proveedor.direccion || '',
-            producto_suministrado: proveedor.producto_suministrado || '',
+            productos_suministrados: proveedor.productos_suministrados || '',
             observaciones: proveedor.observaciones || ''
         });
 
@@ -422,7 +422,7 @@ function Proveedores() {
                                         name="telefono"
                                         value={formulario.telefono}
                                         onChange={manejarCambio}
-                                        maxLength="10"
+                                        maxLength="16"
                                         required
                                     />
 

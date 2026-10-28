@@ -29,12 +29,15 @@ describe('Pruebas de autenticación', () => {
     test('registrar usuario rechaza campos obligatorios vacíos', async () => {
 
         const req = {
-            body: {
-                nombre: '',
-                usuario: '',
-                contrasena: ''
-            }
-        };
+    usuario: {
+        rol: 'Administrador'
+    },
+    body: {
+        nombre: '',
+        usuario: '',
+        contrasena: ''
+    }
+};
 
         const res = crearRespuesta();
 
@@ -64,12 +67,15 @@ test('registrar usuario rechaza un nombre de usuario ya existente', async () => 
     });
 
     const req = {
-        body: {
-            nombre: 'Otra Persona',
-            usuario: 'astrid',
-            contrasena: '123456'
-        }
-    };
+    usuario: {
+        rol: 'Administrador'
+    },
+    body: {
+        nombre: 'Otra Persona',
+        usuario: 'astrid',
+        contrasena: '123456'
+    }
+};
 
     const res = crearRespuesta();
 

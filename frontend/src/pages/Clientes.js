@@ -476,7 +476,7 @@ const abrirPedidoDesdeHistorial = (idpedido) => {
                                         name="telefono"
                                         value={formulario.telefono}
                                         onChange={manejarCambio}
-                                        maxLength="10"
+                                        maxLength="16"
                                         required
                                     />
 

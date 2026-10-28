@@ -25,3 +25,7 @@ Thumbs.db
 
 # Imagen temporal usada para probar la carga de pedidos
 backend/uploads/pedido-1791935926874.jpg
+backend/uploads/pedido-1792596560932.png
+
+# Copias de seguridad de la base de datos
+*.backup

@@ -739,7 +739,7 @@ async function descargarDetallePedido() {
         ) {
 
             const urlImagen =
-                `http://localhost:3330/uploads/${pedidoSeleccionado.imagen_referencia}`;
+                `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`;
 
             try {
 
@@ -1927,7 +1927,7 @@ async function guardarPedido(e) {
 
                         <img
                             className="imagen-referencia"
-                            src={`http://localhost:3330/uploads/${pedidoSeleccionado.imagen_referencia}`}
+                            src={`${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`}
                             alt="Imagen de referencia"
                         />
 

@@ -4,7 +4,7 @@ const UsuarioControlador = require('../controllers/usuarioControlador'); // Cont
 const verificarToken = require('../middleware/autenticacion'); // Middleware de autenticación
 
 // registrar usuario
-router.post('/registrar', UsuarioControlador.registrarUsuario);
+router.post('/registrar',verificarToken,UsuarioControlador.registrarUsuario);
 
 // iniciar sesión
 router.post('/login', UsuarioControlador.iniciarSesion);

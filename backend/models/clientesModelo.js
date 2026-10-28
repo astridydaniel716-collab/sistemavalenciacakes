@@ -131,7 +131,29 @@ const eliminarCliente = async (id) => {
     return resultado.rows[0];
 };
 
+// Verificar si el teléfono o correo ya existen entre los clientes
+const verificarDuplicados = async (telefono, correo, idExcluir = null) => {
+    const resultado = await Conexion.query(
+        `SELECT
+            EXISTS (
+                SELECT 1
+                FROM clientes
+                WHERE telefono = $1
+                  AND ($3::integer IS NULL OR idcliente <> $3)
+            ) AS telefono_duplicado,
+            EXISTS (
+                SELECT 1
+                FROM clientes
+                WHERE correo IS NOT NULL
+                  AND LOWER(TRIM(correo)) = LOWER(TRIM($2))
+                  AND TRIM($2) <> ''
+                  AND ($3::integer IS NULL OR idcliente <> $3)
+            ) AS correo_duplicado`,
+        [telefono, correo || '', idExcluir]
+    );
 
+    return resultado.rows[0];
+};
 
 module.exports = {
     crearCliente,
@@ -140,5 +162,6 @@ module.exports = {
     buscarClientes,
     editarCliente,
     obtenerHistorialPedidos,
-    eliminarCliente
+    eliminarCliente,
+    verificarDuplicados
 };

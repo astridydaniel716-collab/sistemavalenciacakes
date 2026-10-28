@@ -83,37 +83,49 @@ describe("Pruebas del módulo de pedidos", () => {
                CLIENTES
             ----------------------------------------- */
             if (url.includes("/app/clientes/todos")) {
-                return {
-                    ok: true,
-                    json: async () => [
-                        {
-                            idcliente: 1,
-                            nombre: "Cliente de prueba",
-                            telefono: "3000000000",
-                            correo: "cliente@test.com",
-                            direccion: "Calle 10 #20-30",
-                            observaciones: ""
-                        }
-                    ]
-                };
-            }
+    const clientes = [
+        {
+            idcliente: 1,
+            nombre: "Cliente de prueba",
+            telefono: "3000000000",
+            correo: "cliente@test.com",
+            direccion: "Calle 10 #20-30",
+            observaciones: ""
+        }
+    ];
+
+    return {
+        ok: true,
+        text: async () => JSON.stringify(clientes),
+        json: async () => clientes
+    };
+}
             /* -----------------------------------------
                PRODUCTOS
             ----------------------------------------- */
             if (url.includes("/app/productos/todos")) {
-                return {
-                    ok: true,
-                    json: async () => [
-                        {
-                            idproducto: 1,
-                            nombre: "Torta de chocolate",
-                            tipo_crema: "Chocolate",
-                            porciones: "10",
-                            precio_base: 50000
-                        }
-                    ]
-                };
-            }
+    return {
+        ok: true,
+        text: async () => JSON.stringify([
+            {
+                idproducto: 1,
+                nombre: "Torta de chocolate",
+                tipo_crema: "Chocolate",
+                porciones: "10",
+                precio_base: 50000
+            }
+        ]),
+        json: async () => [
+            {
+                idproducto: 1,
+                nombre: "Torta de chocolate",
+                tipo_crema: "Chocolate",
+                porciones: "10",
+                precio_base: 50000
+            }
+        ]
+    };
+}
             return {
                 ok: true,
                 json: async () => []
@@ -358,32 +370,27 @@ describe("Pruebas del módulo de pedidos", () => {
                     };
                 }
                 /* Clientes */
-                if (
-                    url.includes(
-                        "/app/clientes/todos"
-                    )
-                ) {
-                    return {
-                        ok: true,
-                        json: async () => []
-                    };
-                }
+                if (url.includes("/app/clientes/todos")) {
+    return {
+        ok: true,
+        text: async () => JSON.stringify([]),
+        json: async () => []
+    };
+}
                 /* Productos */
-                if (
-                    url.includes(
-                        "/app/productos/todos"
-                    )
-                ) {
-                    return {
-                        ok: true,
-                        json: async () => []
-                    };
-                }
-                return {
-                    ok: true,
-                    json: async () => []
-                };
-            });
+               /* Productos */
+if (
+    url.includes(
+        "/app/productos/todos"
+    )
+) {
+    return {
+        ok: true,
+        text: async () => JSON.stringify([]),
+        json: async () => []
+    };
+}
+});
             /* -----------------------------------------
                SIMULAR CARGA DEL LOGO
             ----------------------------------------- */
@@ -659,32 +666,27 @@ expect(jsPDF).toHaveBeenCalled();
                     };
                 }
                 /* Clientes */
-                if (
-                    url.includes(
-                        "/app/clientes/todos"
-                    )
-                ) {
-                    return {
-                        ok: true,
-                        json: async () => []
-                    };
-                }
-                /* Productos */
-                if (
-                    url.includes(
-                        "/app/productos/todos"
-                    )
-                ) {
-                    return {
-                        ok: true,
-                        json: async () => []
-                    };
-                }
-                return {
-                    ok: true,
-                    json: async () => []
-                };
-            });
+                if (url.includes("/app/clientes/todos")) {
+    return {
+        ok: true,
+        text: async () => JSON.stringify([]),
+        json: async () => []
+    };
+}
+
+/* Productos */
+if (
+    url.includes(
+        "/app/productos/todos"
+    )
+) {
+    return {
+        ok: true,
+        text: async () => JSON.stringify([]),
+        json: async () => []
+    };
+}
+});
             render(<Pedidos />);
             /* -----------------------------------------
                VERIFICAR PEDIDO

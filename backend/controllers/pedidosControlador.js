@@ -324,17 +324,52 @@ async editarPedido(req, res) {
         });
 
     } catch (error) {
+    console.error("Error al editar pedido:", error);
 
-        console.error("Error al editar pedido:", error);
-
-        res.status(500).json({
-            mensaje: "Error al actualizar el pedido."
+    if (
+        error.message ===
+        "No se pueden editar pedidos entregados o cancelados."
+    ) {
+        return res.status(409).json({
+            mensaje: error.message
         });
-
     }
 
-},
+    if (
+        error.message === "Pedido no encontrado."
+    ) {
+        return res.status(404).json({
+            mensaje: error.message
+        });
+    }
 
+    const erroresValidacion = [
+        "Identificador de pedido inválido.",
+        "Debe seleccionar un cliente válido.",
+        "El cliente seleccionado no existe.",
+        "Debe indicar una fecha de entrega válida.",
+        "Debe indicar una hora de entrega válida.",
+        "Debe indicar el tipo de entrega.",
+        "El pedido debe contener al menos un producto.",
+        "Hay un producto con identificador inválido.",
+        "La cantidad debe ser un entero mayor que cero.",
+        "El valor de los extras no puede ser negativo.",
+        "El precio base del producto no es válido.",
+        "El anticipo debe estar entre cero y el total del pedido."
+    ];
+
+    if (erroresValidacion.includes(error.message)) {
+        return res.status(400).json({
+            mensaje: error.message
+        });
+    }
+
+    return res.status(500).json({
+        mensaje: "Error al actualizar el pedido."
+    });
+}
+
+},
 
 // ACTUALIZAR ESTADO
 

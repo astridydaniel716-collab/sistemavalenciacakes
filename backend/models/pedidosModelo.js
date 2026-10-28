@@ -327,11 +327,12 @@ async obtenerPedidoPorId(idpedido) {
                 throw new Error("Identificador de pedido inválido.");
             }
 
-            // Obtener información actual del pedido
+            // Obtener y bloquear el pedido durante la transacción
             const consultaActual = `
                 SELECT imagen_referencia, estado
                 FROM pedidos
-                WHERE idpedido = $1;
+                WHERE idpedido = $1
+                FOR UPDATE;
             `;
 
             const resultadoActual = await client.query(
@@ -348,6 +349,16 @@ async obtenerPedidoPorId(idpedido) {
 
             const estadoActual =
                 resultadoActual.rows[0].estado;
+
+            // Impedir la edición de pedidos con estado entregado o cancelado
+            if (
+            estadoActual === "Entregado" ||
+            estadoActual === "Cancelado"
+        ) {
+            throw new Error(
+            "No se pueden editar pedidos entregados o cancelados."
+        );
+        }
 
             // Validar cliente
             const clienteId = Number(data.idcliente);

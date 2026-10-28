@@ -34,9 +34,7 @@ function Dashboard({cerrarSesionApp}) {
         } catch (error) {
 
             console.error("Error al cargar alertas:", error);
-
         }
-
     }
 
     // Mostrar Hoy, Mañana o Faltan X días
@@ -56,7 +54,6 @@ function Dashboard({cerrarSesionApp}) {
         if (diferencia === 1) return "Mañana";
 
         return `Faltan ${diferencia} días`;
-
     }
 
     return (

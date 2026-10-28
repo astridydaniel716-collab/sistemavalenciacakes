@@ -3,25 +3,110 @@ const ProveedorModelo = require('../models/proveedoresModelo');
 
 // Registrar proveedor
 const crearProveedor = async (req, res) => {
-
     try {
+        let {
+            nombre,
+            telefono,
+            correo,
+            direccion,
+            productos_suministrados,
+            observaciones
+        } = req.body;
 
-        const proveedor = await ProveedorModelo.crearProveedor(req.body);
+        // Validar campos obligatorios
+        if (!nombre || !String(nombre).trim()) {
+            return res.status(400).json({
+                mensaje: 'El nombre del proveedor es obligatorio'
+            });
+        }
 
-        res.status(201).json({
-            mensaje: 'Proveedor registrado correctamente',
+        if (!telefono || !String(telefono).trim()) {
+            return res.status(400).json({
+                mensaje: 'El teléfono del proveedor es obligatorio'
+            });
+        }
+
+        if (!productos_suministrados || !String(productos_suministrados).trim()) {
+            return res.status(400).json({
+                mensaje: 'Los productos suministrados son obligatorios'
+            });
+        }
+
+        // Validar longitud del teléfono
+        if (String(telefono).trim().length > 16) {
+            return res.status(400).json({
+                mensaje: 'El teléfono no puede superar los 16 caracteres'
+            });
+        }
+
+        // Limpiar espacios
+        nombre = String(nombre).trim();
+        telefono = String(telefono).trim();
+        productos_suministrados = String(productos_suministrados).trim();
+
+        // Validar correo solo si se proporciona
+        if (
+            correo !== undefined &&
+            correo !== null &&
+            String(correo).trim() !== ''
+        ) {
+            correo = String(correo).trim();
+
+            const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!formatoCorreo.test(correo)) {
+                return res.status(400).json({
+                    mensaje: 'El formato del correo electrónico no es válido.'
+                });
+            }
+        } else {
+            correo = null;
+        }
+
+        // Normalizar campos opcionales
+        direccion = direccion?.trim() || null;
+        observaciones = observaciones?.trim() || null;
+
+        const duplicados = await ProveedorModelo.verificarDuplicados(
+    telefono,
+    correo
+);
+
+if (duplicados.telefono_duplicado) {
+    return res.status(409).json({
+        mensaje: 'Ya existe un proveedor registrado con ese teléfono.'
+    });
+}
+
+if (duplicados.correo_duplicado) {
+    return res.status(409).json({
+        mensaje: 'Ya existe un proveedor registrado con ese correo electrónico.'
+    });
+}
+
+        const proveedor = await ProveedorModelo.crearProveedor({
+            nombre,
+            telefono,
+            correo,
+            direccion,
+            productos_suministrados,
+            observaciones
+        });
+
+        return res.status(201).json({
+            mensaje: 'Proveedor registrado correctamente.',
             proveedor
         });
 
     } catch (error) {
-
         console.error('Error al registrar proveedor:', error);
 
-        res.status(500).json({
-            mensaje: 'Error al registrar el proveedor'
+        return res.status(500).json({
+            mensaje: 'Error interno al registrar el proveedor.'
         });
     }
 };
+
 
 
 // Obtener todos los proveedores
@@ -104,31 +189,122 @@ const buscarProveedores = async (req, res) => {
 
 // Editar proveedor
 const editarProveedor = async (req, res) => {
-
     try {
+        let {
+            nombre,
+            telefono,
+            correo,
+            direccion,
+            productos_suministrados,
+            observaciones
+        } = req.body;
 
-        const proveedor = await ProveedorModelo.editarProveedor(
-            req.params.id,
-            req.body
-        );
+        // Validar identificador
+        const id = Number(req.params.id);
 
-        if (!proveedor) {
-            return res.status(404).json({
-                mensaje: 'Proveedor no encontrado'
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                mensaje: 'El identificador del proveedor no es válido.'
             });
         }
 
-        res.status(200).json({
-            mensaje: 'Proveedor actualizado correctamente',
+        // Validar campos obligatorios
+        if (!nombre || !String(nombre).trim()) {
+            return res.status(400).json({
+                mensaje: 'El nombre del proveedor es obligatorio'
+            });
+        }
+
+        if (!telefono || !String(telefono).trim()) {
+            return res.status(400).json({
+                mensaje: 'El teléfono del proveedor es obligatorio'
+            });
+        }
+
+        if (!productos_suministrados || !String(productos_suministrados).trim()) {
+            return res.status(400).json({
+                mensaje: 'Los productos suministrados son obligatorios'
+            });
+        }
+
+        // Validar longitud del teléfono
+        if (String(telefono).trim().length > 16) {
+            return res.status(400).json({
+                mensaje: 'El teléfono no puede superar los 16 caracteres'
+            });
+        }
+
+        // Limpiar espacios
+        nombre = String(nombre).trim();
+        telefono = String(telefono).trim();
+        productos_suministrados = String(productos_suministrados).trim();
+
+        // Validar correo si se proporciona
+        if (
+            correo !== undefined &&
+            correo !== null &&
+            String(correo).trim() !== ''
+        ) {
+            correo = String(correo).trim();
+
+            const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!formatoCorreo.test(correo)) {
+                return res.status(400).json({
+                    mensaje: 'El formato del correo electrónico no es válido.'
+                });
+            }
+        } else {
+            correo = null;
+        }
+
+        // Normalizar campos opcionales
+        direccion = direccion?.trim() || null;
+        observaciones = observaciones?.trim() || null;
+
+        const duplicados = await ProveedorModelo.verificarDuplicados(
+    telefono,
+    correo,
+    id
+);
+
+if (duplicados.telefono_duplicado) {
+    return res.status(409).json({
+        mensaje: 'Ya existe otro proveedor registrado con ese teléfono.'
+    });
+}
+
+if (duplicados.correo_duplicado) {
+    return res.status(409).json({
+        mensaje: 'Ya existe otro proveedor registrado con ese correo electrónico.'
+    });
+}
+
+        const proveedor = await ProveedorModelo.editarProveedor(id, {
+            nombre,
+            telefono,
+            correo,
+            direccion,
+            productos_suministrados,
+            observaciones
+        });
+
+        if (!proveedor) {
+            return res.status(404).json({
+                mensaje: 'Proveedor no encontrado.'
+            });
+        }
+
+        return res.status(200).json({
+            mensaje: 'Proveedor actualizado correctamente.',
             proveedor
         });
 
     } catch (error) {
-
         console.error('Error al editar proveedor:', error);
 
-        res.status(500).json({
-            mensaje: 'Error al actualizar el proveedor'
+        return res.status(500).json({
+            mensaje: 'Error interno al actualizar el proveedor.'
         });
     }
 };

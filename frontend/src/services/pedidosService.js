@@ -1,5 +1,5 @@
 import apiFetch from './api';
-const API_PEDIDOS = "http://localhost:3330/app/pedidos";
+const API_PEDIDOS = '/app/pedidos';
 
 const pedidosService = {
 
@@ -180,7 +180,7 @@ async actualizarEstado(id, estado) {
         hoy.setHours(0, 0, 0, 0);
 
         const limite = new Date(hoy);
-        limite.setDate(limite.getDate() + 2);
+        limite.setDate(limite.getDate() + 3);
 
         return pedidos.filter(pedido => {
 

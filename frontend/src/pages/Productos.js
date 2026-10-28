@@ -148,56 +148,62 @@ function Productos() {
 
     // Guardar o actualizar producto
     async function guardarProducto(e) {
-        e.preventDefault();
+e.preventDefault();
 
-        try {
-            if (modoEdicion) {
+try {
+    if (modoEdicion) {
+        await productoService.editar(
+            productoSeleccionado.idproducto,
+            formulario
+        );
 
-                await productoService.editar(
-                    productoSeleccionado.idproducto,
-                    formulario
-                );
+        alert("Producto actualizado correctamente.");
+    } else {
+        await productoService.crear(formulario);
 
-                alert("Producto actualizado correctamente.");
-
-            } else {
-
-                await productoService.crear(formulario);
-
-                alert("Producto registrado correctamente.");
-            }
-
-            setMostrarModal(false);
-            cargarProductos();
-
-        } catch (error) {
-            console.error(error);
-            alert("Ocurrió un error al guardar el producto.");
-        }
+        alert("Producto registrado correctamente.");
     }
+
+    setMostrarModal(false);
+    await cargarProductos();
+
+} catch (error) {
+    console.error("Error al guardar el producto:", error);
+
+    alert(
+        error.message ||
+        "Ocurrió un error al guardar el producto."
+    );
+}
+
+}
 
 
     // Eliminar producto
     async function eliminarProducto(id) {
-        const confirmar = window.confirm(
-            "¿Deseas eliminar este producto?"
-        );
+const confirmar = window.confirm(
+"¿Deseas eliminar este producto?"
+);
 
-        if (!confirmar) return;
+if (!confirmar) return;
 
-        try {
-            await productoService.eliminar(id);
+try {
+    await productoService.eliminar(id);
 
-            alert("Producto eliminado correctamente.");
+    alert("Producto eliminado correctamente.");
 
-            cargarProductos();
+    await cargarProductos();
 
-        } catch (error) {
-            console.error(error);
-            alert("Error al eliminar el producto.");
-        }
-    }
+} catch (error) {
+    console.error("Error al eliminar el producto:", error);
 
+    alert(
+        error.message ||
+        "Error al eliminar el producto."
+    );
+}
+
+}
 
     // Actualizar datos del formulario
     function manejarCambio(e) {
@@ -450,6 +456,8 @@ function Productos() {
                                 value={formulario.precio_base}
                                 onChange={manejarCambio}
                                 placeholder="Ejemplo: 55000"
+                                min="1"
+                                step="1"
                                 required
                             />
 

@@ -1,32 +1,29 @@
 # Valencia Cakes
 
-Sistema web para la gestión de una repostería artesanal. Permite administrar clientes, productos, proveedores y pedidos registrados manualmente.
+Sistema web para la gestión de una repostería artesanal. Permite administrar clientes, productos, proveedores y pedidos mediante una interfaz web conectada a una API REST y una base de datos PostgreSQL.
 
-El proyecto está desarrollado con React, Node.js, Express y PostgreSQL. Está diseñado para facilitar la gestión de la información de Valencia Cakes mediante una interfaz web y una API REST.
+## 1. Características principales
 
-## Características principales
-
-- Gestión de clientes.
-- Gestión de productos.
-- Gestión de proveedores.
+- Gestión de clientes (crear, editar, consultar y eliminar)
+- Gestión de productos (crear, editar, consultar y eliminar)
+- Gestión de proveedores (crear, editar, consultar y eliminar)
 - Registro y consulta de pedidos.
 - Creación manual de pedidos.
 - Edición de pedidos y sus productos.
 - Consulta del detalle de cada pedido.
-- Cancelación de pedidos pendientes.
+- Cancelación de pedidos, solo cuando están en estado "pendiente".
 - Búsqueda y filtrado de pedidos.
 - Registro de anticipos y cálculo de saldos.
 - Autenticación mediante tokens JWT.
-- Cifrado de contraseñas mediante bcrypt.
-- Interfaz desarrollada con React.
+- Protección de contraseñas mediante bcrypt.
+- Interfaz web desarrollada con React.
 - API REST desarrollada con Node.js y Express.
-- Persistencia de datos mediante PostgreSQL.
+- Persistencia de información mediante PostgreSQL.
 - Pruebas automatizadas para el backend y el frontend.
 
-## Tecnologías utilizadas
+## 2. Tecnologías utilizadas
 
 ### Frontend
-
 - React
 - React Router
 - JavaScript
@@ -35,73 +32,73 @@ El proyecto está desarrollado con React, Node.js, Express y PostgreSQL. Está d
 - React Testing Library
 
 ### Backend
-
 - Node.js
 - Express
 - PostgreSQL
 - `pg`
-- JSON Web Token (`jsonwebtoken`)
+- `jsonwebtoken`
 - `bcrypt`
 - Multer
 - Jest
-- Nodemon para el desarrollo
+- Nodemon
 
-## Requisitos previos
+### Herramientas
+- Git
+- Visual Studio Code
+- PostgreSQL
+- pgAdmin
 
-Antes de ejecutar el proyecto, instala:
+## 3. Requisitos previos
 
-- Node.js y npm.
-- PostgreSQL.
+Antes de instalar el proyecto, asegúrate de tener:
+
+- Node.js y npm instalados.
+- PostgreSQL instalado y funcionando.
 - pgAdmin, recomendado para administrar la base de datos.
-- Git.
+- Git instalado.
 - Un editor de código, como Visual Studio Code.
 
-## Instalación del proyecto
+## 4. Instalación del proyecto
 
-### 1. Clonar el repositorio
+### 4.1. Clonar el repositorio
 
-Desde PowerShell o una terminal, ejecuta:
+Abre PowerShell y ejecuta:
 
-```bash
 git clone https://github.com/astridydaniel716-collab/sistemavalenciacakes.git
 cd sistemavalenciacakes
-```
 
-### 2. Instalar las dependencias
+### 4.2. Instalar las dependencias del backend
 
-Instala las dependencias del backend:
+Desde la raíz del proyecto:
 
-```powershell
 cd backend
 npm install
-```
 
-Para instalar las dependencias del frontend, abre otra terminal desde la raíz del proyecto y ejecuta:
+### 4.3. Instalar las dependencias del frontend
 
-```powershell
+Abre una segunda terminal en la raíz del proyecto y ejecuta:
+
 cd frontend
 npm install
-```
 
-## Configuración del backend
+## 5. Configuración del backend
 
-### 1. Crear el archivo de entorno
+### 5.1. Crear el archivo de entorno
 
-Desde la raíz del proyecto, crea el archivo `.env` a partir de `.env.example`:
+Desde la raíz del repositorio, ejecuta:
 
-```powershell
 Copy-Item backend/.env.example backend/.env
-```
 
-Si el archivo `.env` ya existe, no ejecutes este comando para evitar sobrescribir tu configuración local.
 
-### 2. Configurar las variables
+Si ya existe `backend/.env`, no ejecutes el comando anterior, para evitar sobrescribir tu configuración.
 
-Abre `backend/.env` y configura los datos de conexión correspondientes a tu instalación de PostgreSQL.
+### 5.2. Configurar las variables de entorno
 
-Ejemplo para la base de datos de demostración:
+Abre `backend/.env` y configura los datos de conexión de PostgreSQL.
 
-```env
+Ejemplo:
+
+env
 DB_HOST=localhost
 DB_USER=tu_usuario_postgres
 DB_PASSWORD=tu_contrasena_postgres
@@ -109,155 +106,189 @@ DB_NAME=sistemavalenciacakes_demo
 DB_PORT=5432
 PORT=3330
 JWT_SECRET=coloca_aqui_una_clave_secreta
-```
 
-Reemplaza los valores de ejemplo por los de tu entorno. Utiliza una clave secreta adecuada para JWT.
 
-El nombre `sistemavalenciacakes_demo` corresponde a la base de datos de demostración descrita en la siguiente sección. Si utilizas otra base de datos, ajusta `DB_NAME` según corresponda.
+Sustituye los valores de ejemplo por los correspondientes a tu instalación.
 
-## Base de datos
+- `DB_HOST`: servidor de PostgreSQL.
+- `DB_USER`: usuario de PostgreSQL.
+- `DB_PASSWORD`: contraseña de ese usuario.
+- `DB_NAME`: nombre de la base de datos.
+- `DB_PORT`: puerto de PostgreSQL.
+- `PORT`: puerto del backend.
+- `JWT_SECRET`: clave utilizada para firmar los tokens de autenticación.
+
+No publiques el archivo `.env` ni compartas credenciales reales.
+
+## 6. Configuración de la base de datos
 
 El proyecto utiliza PostgreSQL para almacenar la información de usuarios, clientes, productos, proveedores y pedidos.
 
-### 1. Crear la base de datos de demostración
+### 6.1. Crear la base de datos de demostración
 
 En pgAdmin:
 
 1. Conéctate a tu servidor PostgreSQL.
 2. Haz clic derecho en **Databases**.
 3. Selecciona **Create → Database**.
-4. Asigna el nombre `sistemavalenciacakes_demo`.
+4. Escribe `sistemavalenciacakes_demo` como nombre.
 5. Guarda los cambios.
 
-### 2. Crear las tablas y cargar datos de prueba
+### 6.2. Crear las tablas y cargar los datos de prueba
 
-En la raíz del repositorio debe existir esta estructura:
+En el repositorio está disponible el archivo:
 
-```text
-database/
-└── create_tables.sql
-```
-
-El archivo `database/create_tables.sql` contiene las instrucciones SQL para crear las tablas necesarias y cargar datos ficticios de demostración.
+database/create_tables.sql
 
 Para ejecutarlo:
 
-1. Selecciona la base de datos `sistemavalenciacakes_demo` en pgAdmin.
+1. Selecciona la base de datos `sistemavalenciacakes_demo`.
 2. Abre **Tools → Query Tool**.
 3. Abre el archivo `database/create_tables.sql`.
-4. Ejecuta todas las instrucciones.
-5. Comprueba que se hayan creado las siguientes tablas:
+4. Ejecuta las instrucciones SQL.
+5. Comprueba que se hayan creado las tablas y los registros de demostración.
 
-   - `usuarios`
-   - `clientes`
-   - `productos`
-   - `proveedores`
-   - `pedidos`
-   - `detalle_pedido`
+Entre las tablas principales se encuentran:
 
-El archivo de demostración incluye registros ficticios para facilitar las primeras pruebas de la aplicación.
+- `usuarios`
+- `clientes`
+- `productos`
+- `proveedores`
+- `pedidos`
+- `detalle_pedido`
 
-**Importante:** ejecuta este archivo únicamente sobre una base de datos nueva y vacía. No lo ejecutes sobre una base de datos que contenga información de trabajo.
+La estructura definitiva depende del contenido del archivo SQL del proyecto.
 
-El archivo SQL original de trabajo puede contener datos personales y no debe publicarse en el repositorio. Utiliza exclusivamente el archivo de demostración preparado para la entrega.
+El archivo SQL preparado para la entrega debe contener datos ficticios y no debe incluir información personal de clientes o proveedores.
 
+## 7. Usuario de prueba
 
-## 3 Credenciales locales de demostración:
+Las credenciales previstas para la demostración local son:
 
 - **Usuario:** `admin_demo`
 - **Contraseña:** `DemoValencia2026!`
 
-Estas credenciales son exclusivamente para pruebas locales y no deben utilizarse en producción.
+Estas credenciales solo funcionarán si el usuario de demostración se encuentra creado en la base de datos y su contraseña es compatible con el mecanismo de autenticación implementado.
 
-## Ejecución del proyecto
+Si el usuario no existe después de ejecutar el archivo SQL, revisa el proceso de inicialización de usuarios del proyecto antes de continuar.
 
-El sistema se ejecuta mediante dos procesos independientes: backend y frontend.
+No utilices estas credenciales en producción.
 
-### 1. Iniciar el backend
+## 8. Ejecución del proyecto
 
-Abre una terminal y ejecuta:
+El backend y el frontend se ejecutan en terminales independientes.
 
-```powershell
+### 8.1. Iniciar el backend
+
+En una terminal de PowerShell:
+
 cd backend
 npm run dev
-```
 
-### 2. Iniciar el frontend
+El backend utilizará el puerto configurado en `PORT`, cuyo valor de ejemplo es `3330`.
 
-Abre una segunda terminal y ejecuta:
+### 8.2. Iniciar el frontend
 
-```powershell
+Abre otra terminal desde la raíz del repositorio:
+
 cd frontend
 npm start
-```
 
-La aplicación de React se abrirá normalmente en:
+La aplicación estará disponible normalmente en:
 
-`http://localhost:3000`
+http://localhost:3000
 
-Si el navegador no se abre automáticamente, ingresa esa dirección manualmente.
+Si el navegador no se abre automáticamente, ingresa la dirección manualmente.
 
-### 3. Iniciar sesión
+### 8.3. Iniciar sesión
 
-Utiliza las credenciales del administrador de prueba creado en el paso de configuración de la base de datos:
+Ingresa las credenciales del usuario de demostración.
 
-- Usuario: `admin_demo`
-- Contraseña: `DemoValencia2026!`
+Si la autenticación es correcta, podrás acceder a los módulos habilitados para ese usuario.
 
-Una vez iniciada la sesión, podrás acceder a los módulos disponibles en la aplicación.
+## 9. Pruebas automatizadas
 
-## Pruebas automatizadas
+El proyecto cuenta con pruebas automatizadas para el backend y el frontend.
 
-El proyecto dispone de pruebas automatizadas para el backend y el frontend.
-
-### Backend
+### 9.1. Pruebas del backend
 
 Desde la carpeta `backend`:
 
-```powershell
 npm test
-```
 
-### Frontend
+### 9.2. Pruebas del frontend
 
 Desde la carpeta `frontend`:
 
-```powershell
 npm.cmd test -- --watchAll=false --coverage
-```
 
-## Verificación funcional
 
-Durante la preparación de esta entrega se realizaron las siguientes comprobaciones manuales con la base de datos de demostración:
+## 10. Demostración funcional
 
-- Conexión del backend con PostgreSQL.
-- Creación de un usuario administrador mediante la API.
-- Inicio de sesión exitoso y generación de un token JWT.
-- Acceso a la interfaz web.
-- Apertura de los módulos disponibles.
-- Visualización de productos, clientes y pedidos de prueba.
-- Creación y edición de un cliente de prueba.
-- Conservación de los cambios después de recargar el navegador y volver a iniciar sesión.
+Para demostrar el funcionamiento completo del sistema, utiliza la base de datos de demostración y sigue estos pasos.
 
-Estas comprobaciones se realizaron localmente. Se recomienda repetirlas en un equipo limpio para validar las instrucciones de instalación de principio a fin.
+### 10.1. Acceso al sistema
 
-## Estado de las funcionalidades
+1. Inicia PostgreSQL.
+2. Inicia el backend.
+3. Inicia el frontend.
+4. Ingresa con el usuario de prueba.
+5. Comprueba que puedes acceder a los módulos correspondientes.
 
-### Funcionalidades implementadas
+### 10.2. Gestión de clientes
 
-- Gestión de clientes, productos y proveedores.
-- Registro y consulta de pedidos.
-- Creación manual y edición de pedidos.
-- Consulta del detalle de los pedidos.
-- Manejo de anticipos y saldos.
-- Autenticación mediante JWT.
-- Conexión con PostgreSQL.
-- Interfaz de administración con React.
-- API REST con Node.js y Express.
+1. Abre el módulo de clientes.
+2. Registra un cliente de prueba.
+3. Consulta el registro en el listado.
+4. Edita uno de sus datos.
+5. Comprueba que el cambio se refleja en la interfaz.
 
-## Estructura del proyecto
+### 10.3. Gestión de proveedores
 
-```text
+1. Abre el módulo de proveedores.
+2. Registra un proveedor ficticio.
+3. Consulta su información.
+4. Edita uno de sus datos.
+5. Verifica que el cambio se refleje en el listado.
+
+### 10.4. Gestión de productos
+
+1. Abre el módulo de productos.
+2. Registra un producto de prueba.
+3. Consulta el producto creado.
+4. Modifica uno de sus datos.
+5. Comprueba que el sistema muestre la información actualizada.
+
+### 10.5. Gestión de pedidos
+
+1. Abre el módulo de pedidos.
+2. Crea un pedido manual.
+3. Selecciona un cliente.
+4. Agrega productos y cantidades.
+5. Agrega la imagen de referencia de ser necesario.
+6. Comprueba el cálculo del total.
+7. Registra el anticipo y verifica el saldo.
+8. Guarda el pedido.
+9. Consulta su detalle. Puedes descargarlo en formato PDF.
+10. Edita el pedido y comprueba los cambios.
+
+Realiza estas operaciones según los campos y las acciones disponibles en la interfaz.
+
+### 10.6. Verificar la persistencia de los datos
+
+Para comprobar que la información queda guardada:
+
+1. Crea o modifica un registro de prueba.
+2. Comprueba que aparezca actualizado en la aplicación.
+3. Cierra sesión.
+4. Vuelve a iniciar sesión.
+5. Consulta el registro y verifica que los cambios continúan presentes.
+6. Si es necesario, consulta la tabla correspondiente en pgAdmin para comprobar la información almacenada.
+
+La persistencia debe comprobarse con los registros realmente guardados en PostgreSQL, no únicamente con los datos visibles temporalmente en la interfaz.
+
+## 11. Estructura del proyecto
+
 sistemavalenciacakes/
 ├── backend/
 │   ├── config/
@@ -271,6 +302,7 @@ sistemavalenciacakes/
 │   ├── app.js
 │   └── package.json
 ├── frontend/
+│   ├── build/
 │   ├── public/
 │   ├── src/
 │   ├── package.json
@@ -279,21 +311,23 @@ sistemavalenciacakes/
 │   └── create_tables.sql
 ├── .gitignore
 └── README.md
-```
 
-## Seguridad
+Esta estructura representa la organización prevista del repositorio. Si alguna carpeta no existe en tu versión actual, ajusta el esquema para que coincida con los archivos reales.
 
-- No incluyas credenciales reales en el repositorio.
-- No publiques archivos `.env`.
-- No incluyas copias de la base de datos real ni datos personales de clientes o proveedores.
+## 12. Seguridad
+
+- No publiques credenciales reales.
+- No incluyas el archivo `.env` en el repositorio.
+- No publiques bases de datos con información personal.
 - Configura `JWT_SECRET` mediante variables de entorno.
-- No utilices las credenciales de demostración en un entorno de producción.
-- Utiliza una contraseña segura para las instalaciones reales.
+- Utiliza contraseñas seguras para las instalaciones reales.
+- Reserva las credenciales de demostración para pruebas locales.
+- Verifica que el archivo SQL de demostración no contenga datos sensibles.
 
-## Consideraciones finales
+## 13. Estado del proyecto
 
-La aplicación se encuentra en desarrollo y las funcionalidades deben validarse de acuerdo con los requisitos del proyecto.
+Valencia Cakes es una aplicación web orientada a la gestión de una repostería artesanal.
 
-Para que otra persona pueda ejecutarla, es necesario disponer de Node.js, PostgreSQL, las dependencias instaladas, las variables de entorno configuradas y la base de datos preparada.
+El proyecto integra una interfaz en React, un backend con Node.js y Express, y una base de datos PostgreSQL.
 
-La base de demostración permite realizar las pruebas iniciales sin utilizar información real del negocio.
+Para validar una instalación nueva, sigue las instrucciones desde la clonación del repositorio hasta el inicio de sesión y la ejecución de las pruebas.

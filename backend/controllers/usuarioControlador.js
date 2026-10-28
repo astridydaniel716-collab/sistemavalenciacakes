@@ -6,6 +6,11 @@ const Config = require('../config/Config'); // Configuración del sistema
 // Registrar un nuevo usuario
 const registrarUsuario = async (req, res) => {
     try {
+        if (req.usuario?.rol !== 'Administrador') {
+    return res.status(403).json({
+        mensaje: 'No tienes permisos para registrar usuarios'
+    });
+}
         const { nombre, usuario, contrasena } = req.body;
 
         // Validar campos obligatorios

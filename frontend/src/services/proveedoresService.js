@@ -1,5 +1,5 @@
 import apiFetch from './api';
-const API_PROVEEDORES = 'http://localhost:3330/app/proveedores';
+const API_PROVEEDORES = '/app/proveedores';
 
 
 // Obtener todos los proveedores
