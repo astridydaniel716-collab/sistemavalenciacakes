@@ -1932,11 +1932,14 @@ async function guardarPedido(e) {
                         <h4>Imagen de referencia</h4>
 
                         <img
-                            className="imagen-referencia"src={pedidoSeleccionado.imagen_referencia.startsWith('http')
-                            ? pedidoSeleccionado.imagen_referencia: `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`
-                        }
-                            alt="Imagen de referencia"
-                        />
+    className="imagen-referencia"
+    src={
+        pedidoSeleccionado.imagen_referencia.startsWith("http")
+            ? pedidoSeleccionado.imagen_referencia
+            : `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`
+    }
+    alt="Imagen de referencia"
+/>
                     </div>
 
                 )}
