@@ -38,23 +38,38 @@ function Dashboard({cerrarSesionApp}) {
     }
 
     // Mostrar Hoy, Mañana o Faltan X días
-    function textoAlerta(fechaEntrega) {
 
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+// Convertir una fecha de calendario sin desplazamientos de zona horaria
+function obtenerFechaLocal(fecha) {
+    if (!fecha) return null;
 
-        const entrega = new Date(fechaEntrega);
-        entrega.setHours(0, 0, 0, 0);
+    const soloFecha = String(fecha).slice(0, 10);
+    const [anio, mes, dia] = soloFecha.split('-').map(Number);
 
-        const diferencia = Math.round(
-            (entrega - hoy) / (1000 * 60 * 60 * 24)
-        );
+    return new Date(anio, mes - 1, dia);
+}
 
-        if (diferencia === 0) return "Hoy";
-        if (diferencia === 1) return "Mañana";
+// Mostrar Hoy, Mañana o Faltan X días
+function textoAlerta(fechaEntrega) {
+    const entrega = obtenerFechaLocal(fechaEntrega);
 
-        return `Faltan ${diferencia} días`;
-    }
+    if (!entrega) return '-';
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const diferencia = Math.round(
+        (entrega.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (diferencia === 0) return 'Hoy';
+    if (diferencia === 1) return 'Mañana';
+
+    return diferencia < 0
+        ? `Vencido hace ${Math.abs(diferencia)} días`
+        : `Faltan ${diferencia} días`;
+}
+
 
     return (
 
@@ -167,8 +182,10 @@ function Dashboard({cerrarSesionApp}) {
                                     </span>
 
                                     <span>
-                                        {pedido.fecha_entrega? new Date(pedido.fecha_entrega).toLocaleDateString('es-CO')
-                                        : '-'} • {pedido.hora_entrega}
+                                        {pedido.fecha_entrega? (() => {
+                                    const fecha = obtenerFechaLocal(pedido.fecha_entrega);
+                                        return fecha
+                                        ? fecha.toLocaleDateString('es-CO'): '-';})(): '-'} • {pedido.hora_entrega}
                                     </span>
 
                                 </div>

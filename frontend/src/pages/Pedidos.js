@@ -9,6 +9,23 @@ import autoTable from "jspdf-autotable";
 import "../css/Pedidos.css";
 
 
+// Convertir fechas de calendario sin desplazamientos de zona horaria
+function formatearFecha(fecha) {
+    if (!fecha) return '-';
+
+    const soloFecha = String(fecha).slice(0, 10);
+    const partes = soloFecha.split('-');
+
+    if (partes.length !== 3) return '-';
+
+    const [anio, mes, dia] = partes.map(Number);
+
+    if (!anio || !mes || !dia) return '-';
+
+    return `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${anio}`;
+}
+
+
 const formularioInicial = {
     idcliente: "",
     fecha_entrega: "",
@@ -438,23 +455,13 @@ async function descargarDetallePedido() {
             81.5
         );
 
-        const fechaPedido =
-            pedidoSeleccionado.fecha_pedido
-                ? new Date(
-                    pedidoSeleccionado.fecha_pedido
-                ).toLocaleDateString(
-                    "es-CO"
-                )
-                : "No disponible";
+        const fechaPedido = formatearFecha(
+    pedidoSeleccionado.fecha_pedido
+);
 
-        const fechaEntrega =
-            pedidoSeleccionado.fecha_entrega
-                ? new Date(
-                    pedidoSeleccionado.fecha_entrega
-                ).toLocaleDateString(
-                    "es-CO"
-                )
-                : "No disponible";
+const fechaEntrega = formatearFecha(
+    pedidoSeleccionado.fecha_entrega
+);
 
         doc.setTextColor(...gris);
         doc.setFont(
@@ -738,8 +745,9 @@ async function descargarDetallePedido() {
             pedidoSeleccionado.imagen_referencia
         ) {
 
-            const urlImagen =
-                `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`;
+            const urlImagen = pedidoSeleccionado.imagen_referencia.startsWith('http')
+    ? pedidoSeleccionado.imagen_referencia
+    : `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`;
 
             try {
 
@@ -1263,9 +1271,7 @@ async function guardarPedido(e) {
 
                                 <td>{pedido.cliente}</td>
 
-                                <td>{pedido.fecha_entrega
-                                    ? new Date(pedido.fecha_entrega).toLocaleDateString('es-CO')
-                                    : '-'}</td>
+                                <td>{formatearFecha(pedido.fecha_entrega)}</td>
 
                                 <td>{pedido.hora_entrega}</td>
 
@@ -1926,11 +1932,11 @@ async function guardarPedido(e) {
                         <h4>Imagen de referencia</h4>
 
                         <img
-                            className="imagen-referencia"
-                            src={`${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`}
+                            className="imagen-referencia"src={pedidoSeleccionado.imagen_referencia.startsWith('http')
+                            ? pedidoSeleccionado.imagen_referencia: `${process.env.REACT_APP_API_URL}/uploads/${pedidoSeleccionado.imagen_referencia}`
+                        }
                             alt="Imagen de referencia"
                         />
-
                     </div>
 
                 )}

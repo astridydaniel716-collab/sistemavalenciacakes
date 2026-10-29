@@ -1,4 +1,25 @@
 const PedidoModelo = require('../models/pedidosModelo');
+const cloudinary = require('../config/cloudinary');
+
+const subirImagenCloudinary = (archivo) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'valencia-cakes/pedidos',
+                resource_type: 'image'
+            },
+            (error, resultado) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                resolve(resultado.secure_url);
+            }
+        );
+
+        stream.end(archivo.buffer);
+    });
+};
 
 const PedidoControlador = {
 
@@ -96,8 +117,8 @@ async crearPedido(req, res) {
         // IMAGEN DE REFERENCIA
         
         const imagen_referencia = req.file
-            ? req.file.filename
-            : null;
+    ? await subirImagenCloudinary(req.file)
+    : null;
 
         const idpedido = await PedidoModelo.crearPedido({
             idcliente: clienteId,
@@ -256,8 +277,8 @@ async editarPedido(req, res) {
         // IMAGEN DE REFERENCIA
         
         const imagen_referencia = req.file
-            ? req.file.filename
-            : null;
+    ? await subirImagenCloudinary(req.file)
+    : null;
 
       
         // DETALLE DEL PEDIDO

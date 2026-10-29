@@ -7,12 +7,10 @@ const pool = new Pool({
    password: Config.DB_PASSWORD,
    database: Config.DB_NAME,
    port: Config.DB_PORT,
-   ssl: process.env.NODE_ENV === 'production'
-      ? { rejectUnauthorized: true }
-      : false,
+   ssl: { rejectUnauthorized: true },
    max: 10,
    idleTimeoutMillis: 30000,
-   connectionTimeoutMillis: 2000
+   connectionTimeoutMillis: 15000
 });
 
 // Probar conexión al iniciar
