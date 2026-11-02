@@ -217,8 +217,11 @@ const pedidosFiltrados = obtenerPedidosFiltrados();
 
             const pedido = await pedidosService.obtenerPorId(id);
 
-            setPedidoSeleccionado(pedido);
-            setMostrarDetalle(true);
+console.log("IMAGEN RECIBIDA DEL BACKEND:", pedido.imagen_referencia);
+console.log("PEDIDO RECIBIDO:", pedido);
+
+setPedidoSeleccionado(pedido);
+setMostrarDetalle(true);
 
         } catch (error) {
 
@@ -1845,11 +1848,9 @@ async function guardarPedido(e) {
 
                     <h4>Información del Pedido</h4>
 
-                    <p><strong>Fecha del pedido:</strong>{" "}
-                    {new Date(pedidoSeleccionado.fecha_pedido).toLocaleDateString('es-CO')}</p>
+                    <p><strong>Fecha del pedido:</strong>{" "}{formatearFecha(pedidoSeleccionado.fecha_pedido)}</p>
 
-                    <p><strong>Fecha de entrega:</strong>{" "}
-                    {new Date(pedidoSeleccionado.fecha_entrega).toLocaleDateString('es-CO')}</p>
+                    <p><strong>Fecha de entrega:</strong>{" "}{formatearFecha(pedidoSeleccionado.fecha_entrega)}</p>
 
                     <p><strong>Hora:</strong> {pedidoSeleccionado.hora_entrega}</p>
 

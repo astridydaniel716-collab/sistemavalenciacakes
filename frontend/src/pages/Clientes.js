@@ -31,6 +31,26 @@ function Clientes() {
         direccion: '',
         observaciones: ''
     });
+const formatearFecha = (fecha) => {
+    if (!fecha) return '-';
+
+    if (typeof fecha === 'string') {
+        const coincidencia = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+        if (coincidencia) {
+            const [, anio, mes, dia] = coincidencia;
+            return `${dia}/${mes}/${anio}`;
+        }
+    }
+
+    const fechaConvertida = new Date(fecha);
+
+    if (Number.isNaN(fechaConvertida.getTime())) {
+        return '-';
+    }
+
+    return fechaConvertida.toLocaleDateString('es-CO');
+};
 
     const [clienteDetalle, setClienteDetalle] = useState(null);
     const [mostrarDetalle, setMostrarDetalle] = useState(false);
@@ -701,21 +721,13 @@ const abrirPedidoDesdeHistorial = (idpedido) => {
                                     #{pedido.idpedido}
                                 </td>
 
-                                    <td>
-                                        {pedido.fecha_pedido
-                                            ? new Date(
-                                                pedido.fecha_pedido
-                                            ).toLocaleDateString('es-CO')
-                                            : '-'}
-                                    </td>
+                                <td>
+                                    {pedido.fecha_pedido?formatearFecha(pedido.fecha_pedido): '-'}
+                                </td>
 
-                                    <td>
-                                        {pedido.fecha_entrega
-                                            ? new Date(
-                                                pedido.fecha_entrega
-                                            ).toLocaleDateString('es-CO')
-                                            : '-'}
-                                    </td>
+                                <td>
+                                    {pedido.fecha_entrega?formatearFecha(pedido.fecha_entrega): '-'}
+                                </td>
 
                                     <td>
                                         {pedido.hora_entrega || '-'}
