@@ -243,42 +243,51 @@ const cerrarDetallePedido = () => {
 
 // CONVERTIR IMAGEN A BASE64 PARA EL PDF
 
-const imagenABase64 = async (url) => {
-    const respuesta = await fetch(url);
+async function imagenABase64(ruta) {
+    const respuesta = await fetch(ruta, {
+        cache: "no-cache"
+    });
 
     if (!respuesta.ok) {
-        throw new Error("No se pudo cargar la imagen.");
+        throw new Error(`No se pudo cargar la imagen: ${ruta}`);
     }
 
     const blob = await respuesta.blob();
 
-    return new Promise((resolve, reject) => {
+    if (!blob.type.startsWith("image/")) {
+        throw new Error("El archivo recibido no es una imagen válida.");
+    }
+
+    const base64 = await new Promise((resolve, reject) => {
         const lector = new FileReader();
 
-        lector.onloadend = () => resolve(lector.result);
-        lector.onerror = reject;
+        lector.onload = () => resolve(lector.result);
+        lector.onerror = () => reject(
+            new Error("Error al convertir la imagen.")
+        );
 
         lector.readAsDataURL(blob);
     });
+
+    const imagen = new Image();
+    imagen.src = base64;
+
+    if (imagen.decode) {
+        await imagen.decode();
+    } else {
+        await new Promise((resolve, reject) => {
+            imagen.onload = resolve;
+            imagen.onerror = reject;
+        });
+    }
+
+    return {
+        base64,
+        width: imagen.naturalWidth,
+        height: imagen.naturalHeight
+    };
 };
 
-// OBTENER PROPORCIÓN DE UNA IMAGEN
-
-const obtenerDimensionesImagen = (base64) => {
-    return new Promise((resolve, reject) => {
-        const imagen = new Image();
-
-        imagen.onload = () => {
-            resolve({
-                width: imagen.width,
-                height: imagen.height
-            });
-        };
-
-        imagen.onerror = reject;
-        imagen.src = base64;
-    });
-};
 
 // DESCARGAR DETALLE DEL PEDIDO EN PDF
 
@@ -304,41 +313,37 @@ async function descargarDetallePedido() {
 
        
         // LOGO
-        const logo = await imagenABase64("/imagenes/logo.png");
+const datosLogo = await imagenABase64("/imagenes/logo.png");
 
-        const dimensionesLogo =
-            await obtenerDimensionesImagen(logo);
+const anchoLogo = 48;
 
-        // Mantener proporción original
-        const anchoLogo = 48;
+const altoLogo =
+    anchoLogo * (datosLogo.height / datosLogo.width);
 
-        const altoLogo =
-            anchoLogo *
-            (dimensionesLogo.height /
-                dimensionesLogo.width);
+// CABECERA
+doc.setFillColor(...rosaClaro);
 
-        // CABECERA
-        doc.setFillColor(...rosaClaro);
-        doc.roundedRect(
-            12,
-            10,
-            186,
-            48,
-            4,
-            4,
-            "F"
-        );
+doc.roundedRect(
+    12,
+    10,
+    186,
+    48,
+    4,
+    4,
+    "F"
+);
 
-        // Logo a la izquierda
-        doc.addImage(
-            logo,
-            "PNG",
-            20,
-            13,
-            anchoLogo,
-            altoLogo
-        );
-
+// LOGO
+doc.addImage(
+    datosLogo.base64,
+    "PNG",
+    20,
+    13,
+    anchoLogo,
+    altoLogo,
+    undefined,
+    "NONE"
+);
         // Línea vertical
         doc.setDrawColor(...lavanda);
         doc.setLineWidth(0.7);
@@ -754,15 +759,14 @@ const fechaEntrega = formatearFecha(
 
             try {
 
-                const imagenReferencia =
-                    await imagenABase64(
-                        urlImagen
-                    );
+                const datosReferencia = await imagenABase64(urlImagen);
 
-                const dimensiones =
-                    await obtenerDimensionesImagen(
-                        imagenReferencia
-                    );
+const imagenReferencia = datosReferencia.base64;
+
+const dimensiones = {
+    width: datosReferencia.width,
+    height: datosReferencia.height
+};
 
                 // Título
                 doc.setFillColor(...lavanda);

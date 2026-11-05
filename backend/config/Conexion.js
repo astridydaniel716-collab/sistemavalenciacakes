@@ -7,7 +7,12 @@ const pool = new Pool({
    password: Config.DB_PASSWORD,
    database: Config.DB_NAME,
    port: Config.DB_PORT,
-   ssl: { rejectUnauthorized: true },
+
+   ssl: Config.DB_HOST === "localhost" ||
+        Config.DB_HOST === "127.0.0.1"
+      ? false
+      : { rejectUnauthorized: true },
+
    max: 10,
    idleTimeoutMillis: 30000,
    connectionTimeoutMillis: 15000
