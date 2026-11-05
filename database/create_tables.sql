@@ -68,6 +68,19 @@ CREATE TABLE public.detalle_pedido (
     valor_extras numeric(10,2) DEFAULT 0
 );
 
+-- Usuario administrador de demostración
+INSERT INTO public.usuarios (
+    nombre,
+    usuario,
+    contrasena,
+    rol
+) VALUES (
+    'Administrador de prueba',
+    'admin_demo',
+    '$2b$10$DDIo/Nr8ecdVVKMs0NSPXuTntzh57qjJ//.L1V3yDE/mIw1zkwBOO',
+    'Administrador'
+);
+
 -- Productos ficticios de demostracion
 INSERT INTO public.productos (nombre, categoria, tipo_crema, porciones, precio_base) VALUES
 ('Torta personalizada', 'Tortas', 'Chantilly', '4-6', 40000.00),
