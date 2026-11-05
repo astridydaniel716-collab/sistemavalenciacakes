@@ -287,7 +287,91 @@ async function imagenABase64(ruta) {
         height: imagen.naturalHeight
     };
 };
+async function prepararLogoPDF(ruta) {
+    const respuesta = await fetch(ruta, {
+        cache: "no-cache"
+    });
 
+    if (!respuesta.ok) {
+        throw new Error("No se pudo cargar el logo");
+    }
+
+    const blob = await respuesta.blob();
+    const url = URL.createObjectURL(blob);
+
+    try {
+        const imagen = new Image();
+        imagen.src = url;
+
+        await imagen.decode();
+
+        const canvasOriginal = document.createElement("canvas");
+        canvasOriginal.width = imagen.naturalWidth;
+        canvasOriginal.height = imagen.naturalHeight;
+
+        const contexto = canvasOriginal.getContext("2d");
+        contexto.drawImage(imagen, 0, 0);
+
+        const datos = contexto.getImageData(
+            0, 0,
+            canvasOriginal.width,
+            canvasOriginal.height
+        ).data;
+
+        let minX = canvasOriginal.width;
+        let minY = canvasOriginal.height;
+        let maxX = 0;
+        let maxY = 0;
+
+        for (let y = 0; y < canvasOriginal.height; y++) {
+            for (let x = 0; x < canvasOriginal.width; x++) {
+                const alfa = datos[(y * canvasOriginal.width + x) * 4 + 3];
+
+                if (alfa > 10) {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        }
+
+        const padding = 8;
+
+        minX = Math.max(0, minX - padding);
+        minY = Math.max(0, minY - padding);
+        maxX = Math.min(canvasOriginal.width - 1, maxX + padding);
+        maxY = Math.min(canvasOriginal.height - 1, maxY + padding);
+
+        const ancho = maxX - minX + 1;
+        const alto = maxY - minY + 1;
+
+        const canvasFinal = document.createElement("canvas");
+        canvasFinal.width = ancho * 2;
+        canvasFinal.height = alto * 2;
+
+        const ctx = canvasFinal.getContext("2d");
+
+        // Fondo igual al de la cabecera del PDF
+        ctx.fillStyle = "rgb(250, 239, 243)";
+        ctx.fillRect(0, 0, canvasFinal.width, canvasFinal.height);
+
+        ctx.drawImage(
+            imagen,
+            minX, minY, ancho, alto,
+            0, 0, canvasFinal.width, canvasFinal.height
+        );
+
+        return {
+            base64: canvasFinal.toDataURL("image/jpeg", 0.95),
+            width: canvasFinal.width,
+            height: canvasFinal.height
+        };
+
+    } finally {
+        URL.revokeObjectURL(url);
+    }
+}
 
 // DESCARGAR DETALLE DEL PEDIDO EN PDF
 
@@ -313,12 +397,14 @@ async function descargarDetallePedido() {
 
        
         // LOGO
-const datosLogo = await imagenABase64("/imagenes/logo.png");
+const datosLogo = await prepararLogoPDF("/imagenes/logo.png");
 
 const anchoLogo = 48;
 
 const altoLogo =
     anchoLogo * (datosLogo.height / datosLogo.width);
+
+const posicionLogoY = 10 + (48 - altoLogo) / 2;
 
 // CABECERA
 doc.setFillColor(...rosaClaro);
@@ -336,13 +422,11 @@ doc.roundedRect(
 // LOGO
 doc.addImage(
     datosLogo.base64,
-    "PNG",
+    "JPEG",
     20,
-    13,
+    posicionLogoY,
     anchoLogo,
-    altoLogo,
-    undefined,
-    "NONE"
+    altoLogo
 );
         // Línea vertical
         doc.setDrawColor(...lavanda);
