@@ -145,11 +145,19 @@ async crearPedido(req, res) {
             "Debe seleccionar un cliente válido.",
             "El cliente seleccionado no existe.",
             "El pedido debe contener al menos un producto.",
+            "Los datos de un producto del pedido no son válidos.",
             "Hay un producto con identificador inválido.",
             "La cantidad debe ser un entero mayor que cero.",
+            "El valor de los extras debe ser un número válido.",
+            "El valor de los extras debe ser un entero no negativo.",
             "El valor de los extras no puede ser negativo.",
+            "La descripción del producto debe ser texto.",
+            "Los extras deben ser texto.",
             "El precio base del producto no es válido.",
-            "El anticipo debe estar entre cero y el total del pedido."
+            "El importe del producto supera el límite permitido.",
+            "El total del pedido supera el límite permitido.",
+            "El anticipo debe ser un número válido.",
+            "El anticipo debe ser un entero entre cero y el total del pedido."
         ];
 
         if (
@@ -365,18 +373,22 @@ async editarPedido(req, res) {
     }
 
     const erroresValidacion = [
-        "Identificador de pedido inválido.",
-        "Debe seleccionar un cliente válido.",
-        "El cliente seleccionado no existe.",
-        "Debe indicar una fecha de entrega válida.",
-        "Debe indicar una hora de entrega válida.",
-        "Debe indicar el tipo de entrega.",
-        "El pedido debe contener al menos un producto.",
-        "Hay un producto con identificador inválido.",
-        "La cantidad debe ser un entero mayor que cero.",
-        "El valor de los extras no puede ser negativo.",
-        "El precio base del producto no es válido.",
-        "El anticipo debe estar entre cero y el total del pedido."
+            "Debe seleccionar un cliente válido.",
+            "El cliente seleccionado no existe.",
+            "El pedido debe contener al menos un producto.",
+            "Los datos de un producto del pedido no son válidos.",
+            "Hay un producto con identificador inválido.",
+            "La cantidad debe ser un entero mayor que cero.",
+            "El valor de los extras debe ser un número válido.",
+            "El valor de los extras debe ser un entero no negativo.",
+            "El valor de los extras no puede ser negativo.",
+            "La descripción del producto debe ser texto.",
+            "Los extras deben ser texto.",
+            "El precio base del producto no es válido.",
+            "El importe del producto supera el límite permitido.",
+            "El total del pedido supera el límite permitido.",
+            "El anticipo debe ser un número válido.",
+            "El anticipo debe ser un entero entre cero y el total del pedido."
     ];
 
     if (erroresValidacion.includes(error.message)) {
@@ -407,7 +419,6 @@ async actualizarEstado(req, res) {
         }
 
         const estadosPermitidos = [
-            "Pendiente",
             "En preparación",
             "Listo para entregar",
             "Entregado"
@@ -431,10 +442,18 @@ async actualizarEstado(req, res) {
         }
 
         if (pedido.error) {
-            return res.status(400).json({
-                mensaje: pedido.error
-            });
-        }
+    const conflictos = [
+        "Un pedido cancelado no puede cambiar de estado.",
+        "Un pedido entregado no puede cambiar de estado.",
+        "No se pudo actualizar el estado porque el pedido cambió."
+    ];
+
+    const status = conflictos.includes(pedido.error) ? 409 : 400;
+
+    return res.status(status).json({
+        mensaje: pedido.error
+    });
+}
 
         res.json({
             mensaje: "Estado actualizado correctamente.",

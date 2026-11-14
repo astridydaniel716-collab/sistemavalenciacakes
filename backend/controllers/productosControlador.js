@@ -14,48 +14,71 @@ const ProductoControlador = {
             } = req.body;
 
             // Validar campos obligatorios
-            if (!nombre || !String(nombre).trim()) {
-                return res.status(400).json({
-                    mensaje: 'El nombre del producto es obligatorio.'
-                });
-            }
+            // Validar campos obligatorios
+if (typeof nombre !== 'string' || !nombre.trim()) {
+    return res.status(400).json({
+        mensaje: 'El nombre del producto es obligatorio y debe ser texto.'
+    });
+}
 
-            if (!categoria || !String(categoria).trim()) {
-                return res.status(400).json({
-                    mensaje: 'La categoría del producto es obligatoria.'
-                });
-            }
+if (typeof categoria !== 'string' || !categoria.trim()) {
+    return res.status(400).json({
+        mensaje: 'La categoría debe ser texto y es obligatoria.'
+    });
+}
 
-            if (!tipo_crema || !String(tipo_crema).trim()) {
-                return res.status(400).json({
-                    mensaje: 'El tipo de crema es obligatorio.'
-                });
-            }
+if (typeof tipo_crema !== 'string' || !tipo_crema.trim()) {
+    return res.status(400).json({
+        mensaje: 'El tipo de crema debe ser texto y es obligatorio.'
+    });
+}
 
-            if (!porciones || !String(porciones).trim()) {
-                return res.status(400).json({
-                    mensaje: 'Las porciones del producto son obligatorias.'
-                });
-            }
+if (typeof porciones !== 'string' || !porciones.trim()) {
+    return res.status(400).json({
+        mensaje: 'Las porciones deben ser texto y son obligatorias.'
+    });
+}
 
             // Validar precio
-            if (
-                precio_base === undefined ||
-                precio_base === null ||
-                String(precio_base).trim() === ''
-            ) {
-                return res.status(400).json({
-                    mensaje: 'El precio base del producto es obligatorio.'
-                });
-            }
+if (
+    precio_base === undefined ||
+    precio_base === null ||
+    precio_base === ''
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base del producto es obligatorio.'
+    });
+}
 
-            const precio = Number(precio_base);
+if (
+    typeof precio_base !== 'number' &&
+    typeof precio_base !== 'string'
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base debe ser un número válido.'
+    });
+}
 
-                if (!Number.isFinite(precio) || !Number.isInteger(precio) || precio <= 0){
-                return res.status(400).json({
-                mensaje: 'El precio base debe ser un número entero mayor que cero.'
-            });
-            }
+if (
+    typeof precio_base === 'string' &&
+    precio_base.trim() === ''
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base no puede estar vacío.'
+    });
+}
+
+const precio = Number(precio_base);
+
+if (
+    !Number.isFinite(precio) ||
+    !Number.isInteger(precio) ||
+    precio <= 0
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base debe ser un número entero mayor que cero.'
+    });
+}
 
             // Limpiar espacios
             nombre = String(nombre).trim();
@@ -139,8 +162,14 @@ const ProductoControlador = {
     async obtenerProductoPorId(req, res) {
 
         try {
+            const id = Number(req.params.id);
 
-            const producto = await ProductoModelo.obtenerProductoPorId(req.params.id);
+            if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+            mensaje: 'El identificador del producto no es válido.'
+        });
+    }
+            const producto = await ProductoModelo.obtenerProductoPorId(id);
 
             if (!producto) {
 
@@ -183,48 +212,70 @@ const ProductoControlador = {
             }
 
             // Validar campos obligatorios
-            if (!nombre || !String(nombre).trim()) {
-                return res.status(400).json({
-                    mensaje: 'El nombre del producto es obligatorio.'
-                });
-            }
+if (typeof nombre !== 'string' || !nombre.trim()) {
+    return res.status(400).json({
+        mensaje: 'El nombre del producto es obligatorio y debe ser texto.'
+    });
+}
 
-            if (!categoria || !String(categoria).trim()) {
-                return res.status(400).json({
-                    mensaje: 'La categoría del producto es obligatoria.'
-                });
-            }
+if (typeof categoria !== 'string' || !categoria.trim()) {
+    return res.status(400).json({
+        mensaje: 'La categoría debe ser texto y es obligatoria.'
+    });
+}
 
-            if (!tipo_crema || !String(tipo_crema).trim()) {
-                return res.status(400).json({
-                    mensaje: 'El tipo de crema es obligatorio.'
-                });
-            }
+if (typeof tipo_crema !== 'string' || !tipo_crema.trim()) {
+    return res.status(400).json({
+        mensaje: 'El tipo de crema debe ser texto y es obligatorio.'
+    });
+}
 
-            if (!porciones || !String(porciones).trim()) {
-                return res.status(400).json({
-                    mensaje: 'Las porciones del producto son obligatorias.'
-                });
-            }
+if (typeof porciones !== 'string' || !porciones.trim()) {
+    return res.status(400).json({
+        mensaje: 'Las porciones deben ser texto y son obligatorias.'
+    });
+}
 
             // Validar precio
-            if (
-                precio_base === undefined ||
-                precio_base === null ||
-                String(precio_base).trim() === ''
-            ) {
-                return res.status(400).json({
-                    mensaje: 'El precio base del producto es obligatorio.'
-                });
-            }
+if (
+    precio_base === undefined ||
+    precio_base === null ||
+    precio_base === ''
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base del producto es obligatorio.'
+    });
+}
 
-            const precio = Number(precio_base);
-                if (
-                !Number.isFinite(precio) ||!Number.isInteger(precio) || precio <= 0){
-                return res.status(400).json({
-                mensaje: 'El precio base debe ser un número entero mayor que cero.'
-            });
-            }
+if (
+    typeof precio_base !== 'number' &&
+    typeof precio_base !== 'string'
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base debe ser un número válido.'
+    });
+}
+
+if (
+    typeof precio_base === 'string' &&
+    precio_base.trim() === ''
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base no puede estar vacío.'
+    });
+}
+
+const precio = Number(precio_base);
+
+if (
+    !Number.isFinite(precio) ||
+    !Number.isInteger(precio) ||
+    precio <= 0
+) {
+    return res.status(400).json({
+        mensaje: 'El precio base debe ser un número entero mayor que cero.'
+    });
+}
 
             // Limpiar espacios
             nombre = String(nombre).trim();
@@ -265,8 +316,13 @@ const ProductoControlador = {
     async eliminarProducto(req, res) {
 
         try {
-
-            const producto = await ProductoModelo.eliminarProducto(req.params.id);
+            const id = Number(req.params.id);
+            if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+            mensaje: 'El identificador del producto no es válido.'
+        });
+    }
+            const producto = await ProductoModelo.eliminarProducto(id);
 
             if (!producto) {
 

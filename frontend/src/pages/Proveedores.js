@@ -128,6 +128,52 @@ function Proveedores() {
         setMensaje('');
         setError('');
 
+        // Validar nombre
+if (
+    typeof formulario.nombre !== 'string' ||
+    !formulario.nombre.trim()
+) {
+    setError('El nombre del proveedor es obligatorio.');
+    return;
+}
+
+// Validar teléfono colombiano
+if (!/^[0-9]{10}$/.test(formulario.telefono.trim())) {
+    setError('El teléfono debe tener 10 dígitos.');
+    return;
+}
+
+// Validar productos suministrados
+if (
+    typeof formulario.productos_suministrados !== 'string' ||
+    !formulario.productos_suministrados.trim()
+) {
+    setError('Los productos suministrados son obligatorios.');
+    return;
+}
+
+// Validar correo si se proporciona
+if (formulario.correo.trim() !== '') {
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formatoCorreo.test(formulario.correo.trim())) {
+        setError('El formato del correo electrónico no es válido.');
+        return;
+    }
+}
+
+// Validar dirección
+if (typeof formulario.direccion !== 'string') {
+    setError('La dirección debe ser un texto válido.');
+    return;
+}
+
+// Validar observaciones
+if (typeof formulario.observaciones !== 'string') {
+    setError('Las observaciones deben ser un texto válido.');
+    return;
+}
+
         try {
 
             if (modoEdicion) {
@@ -418,11 +464,22 @@ function Proveedores() {
                                     </label>
 
                                     <input
-                                        type="text"
+                                        type="tel"
                                         name="telefono"
                                         value={formulario.telefono}
-                                        onChange={manejarCambio}
-                                        maxLength="16"
+                                        onChange={(e) => {
+                                const valor = e.target.value;
+
+                                        if (/^\d{0,10}$/.test(valor)) {
+                                manejarCambio(e);
+                            }
+                            }}
+                                        maxLength={10}
+                                        minLength={10}
+                                        inputMode="numeric"
+                                        pattern="[0-9]{10}"
+                                        placeholder="Ej. 3001234567"
+                                        title="Ingrese un teléfono de 10 dígitos"
                                         required
                                     />
 
@@ -471,6 +528,7 @@ function Proveedores() {
                                         name="productos_suministrados"
                                         value={formulario.productos_suministrados}
                                         onChange={manejarCambio}
+                                        required
                                     />
 
                                 </div>

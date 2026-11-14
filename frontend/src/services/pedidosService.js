@@ -128,13 +128,14 @@ const pedidosService = {
         }
     );
 
-    const datos = await respuesta.json();
+    const datos = await respuesta.json().catch(() => ({}));
 
-    if (!respuesta.ok) {
-        throw new Error(
-            datos.mensaje || "Error al actualizar el pedido."
-        );
-    }
+if (!respuesta.ok) {
+    throw new Error(
+        datos.mensaje || datos.error ||
+        "Error al actualizar el pedido."
+    );
+}
 
     return datos;
 },
@@ -153,11 +154,12 @@ async actualizarEstado(id, estado) {
         }
     );
 
-    const datos = await respuesta.json();
+    const datos = await respuesta.json().catch(() => ({}));
 
     if (!respuesta.ok) {
         throw new Error(
-            datos.mensaje || "Error al actualizar el estado del pedido."
+            datos.mensaje || datos.error ||
+            "Error al actualizar el estado del pedido."
         );
     }
 
@@ -212,11 +214,12 @@ async cancelar(id) {
         }
     );
 
-    const datos = await respuesta.json();
+    const datos = await respuesta.json().catch(() => ({}));
 
     if (!respuesta.ok) {
         throw new Error(
-            datos.mensaje || "Error al cancelar el pedido."
+            datos.mensaje || datos.error ||
+            "Error al cancelar el pedido."
         );
     }
 

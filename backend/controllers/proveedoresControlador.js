@@ -13,65 +13,104 @@ const crearProveedor = async (req, res) => {
             observaciones
         } = req.body;
 
-        // Validar campos obligatorios
-        if (!nombre || !String(nombre).trim()) {
+                // Validar nombre
+        if (typeof nombre !== 'string' || !nombre.trim()) {
             return res.status(400).json({
-                mensaje: 'El nombre del proveedor es obligatorio'
+                mensaje: 'El nombre del proveedor es obligatorio y debe ser un texto válido.'
             });
         }
 
-        if (!telefono || !String(telefono).trim()) {
+        // Validar teléfono
+        if (typeof telefono !== 'string' || !telefono.trim()) {
             return res.status(400).json({
-                mensaje: 'El teléfono del proveedor es obligatorio'
+                mensaje: 'El teléfono del proveedor es obligatorio y debe ser un texto válido.'
             });
         }
 
-        if (!productos_suministrados || !String(productos_suministrados).trim()) {
+        // Validar que el teléfono sea colombiano y tenga exactamente 10 dígitos
+        telefono = telefono.trim();
+
+        if (!/^[0-9]{10}$/.test(telefono)) {
             return res.status(400).json({
-                mensaje: 'Los productos suministrados son obligatorios'
+                mensaje: 'El teléfono del proveedor debe tener 10 dígitos.'
             });
         }
 
-        // Validar longitud del teléfono
-        if (String(telefono).trim().length > 16) {
-            return res.status(400).json({
-                mensaje: 'El teléfono no puede superar los 16 caracteres'
-            });
-        }
-
-        // Limpiar espacios
-        nombre = String(nombre).trim();
-        telefono = String(telefono).trim();
-        productos_suministrados = String(productos_suministrados).trim();
-
-        // Validar correo solo si se proporciona
+        // Validar productos suministrados
         if (
-            correo !== undefined &&
-            correo !== null &&
-            String(correo).trim() !== ''
+            typeof productos_suministrados !== 'string' ||
+            !productos_suministrados.trim()
         ) {
-            correo = String(correo).trim();
+            return res.status(400).json({
+                mensaje: 'Los productos suministrados son obligatorios y deben ser un texto válido.'
+            });
+        }
 
-            const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Limpiar espacios de los campos obligatorios
+        nombre = nombre.trim();
+        productos_suministrados = productos_suministrados.trim();
 
-            if (!formatoCorreo.test(correo)) {
+        // Validar correo electrónico si se proporciona
+        if (correo !== undefined && correo !== null) {
+
+            if (typeof correo !== 'string') {
                 return res.status(400).json({
-                    mensaje: 'El formato del correo electrónico no es válido.'
+                    mensaje: 'El correo electrónico debe ser un texto válido.'
                 });
             }
+
+            correo = correo.trim();
+
+            if (correo !== '') {
+                const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!formatoCorreo.test(correo)) {
+                    return res.status(400).json({
+                        mensaje: 'El formato del correo electrónico no es válido.'
+                    });
+                }
+            } else {
+                correo = null;
+            }
+
         } else {
             correo = null;
         }
 
-        // Normalizar campos opcionales
-        direccion = direccion?.trim() || null;
-        observaciones = observaciones?.trim() || null;
+        // Validar dirección si se proporciona
+        if (direccion !== undefined && direccion !== null) {
 
-        const duplicados = await ProveedorModelo.verificarDuplicados(
+            if (typeof direccion !== 'string') {
+                return res.status(400).json({
+                    mensaje: 'La dirección debe ser un texto válido.'
+                });
+            }
+
+            direccion = direccion.trim() || null;
+
+        } else {
+            direccion = null;
+        }
+
+        // Validar observaciones si se proporcionan
+        if (observaciones !== undefined && observaciones !== null) {
+
+            if (typeof observaciones !== 'string') {
+                return res.status(400).json({
+                    mensaje: 'Las observaciones deben ser un texto válido.'
+                });
+            }
+
+            observaciones = observaciones.trim() || null;
+
+        } else {
+            observaciones = null;
+        }
+// comprobar telefono y correo duplicados
+const duplicados = await ProveedorModelo.verificarDuplicados(
     telefono,
     correo
 );
-
 if (duplicados.telefono_duplicado) {
     return res.status(409).json({
         mensaje: 'Ya existe un proveedor registrado con ese teléfono.'
@@ -208,60 +247,110 @@ const editarProveedor = async (req, res) => {
             });
         }
 
-        // Validar campos obligatorios
-        if (!nombre || !String(nombre).trim()) {
+                // Validar nombre
+        if (typeof nombre !== 'string' || !nombre.trim()) {
             return res.status(400).json({
-                mensaje: 'El nombre del proveedor es obligatorio'
+                mensaje: 'El nombre del proveedor es obligatorio y debe ser un texto válido.'
             });
         }
 
-        if (!telefono || !String(telefono).trim()) {
+        // Validar teléfono
+        if (typeof telefono !== 'string' || !telefono.trim()) {
             return res.status(400).json({
-                mensaje: 'El teléfono del proveedor es obligatorio'
+                mensaje: 'El teléfono del proveedor es obligatorio y debe ser un texto válido.'
             });
         }
 
-        if (!productos_suministrados || !String(productos_suministrados).trim()) {
+        // Validar que el teléfono sea colombiano y tenga exactamente 10 dígitos
+        telefono = telefono.trim();
+
+        if (!/^[0-9]{10}$/.test(telefono)) {
             return res.status(400).json({
-                mensaje: 'Los productos suministrados son obligatorios'
+                mensaje: 'El teléfono del proveedor debe tener 10 dígitos .'
             });
         }
 
-        // Validar longitud del teléfono
-        if (String(telefono).trim().length > 16) {
-            return res.status(400).json({
-                mensaje: 'El teléfono no puede superar los 16 caracteres'
-            });
-        }
+// Validar productos suministrados si se proporcionan
+if (
+    productos_suministrados !== undefined &&
+    productos_suministrados !== null &&
+    typeof productos_suministrados !== 'string'
+) {
+    return res.status(400).json({
+        mensaje: 'Los productos suministrados deben ser un texto válido.'
+    });
+}
 
-        // Limpiar espacios
-        nombre = String(nombre).trim();
-        telefono = String(telefono).trim();
-        productos_suministrados = String(productos_suministrados).trim();
+// Si se envía un texto, eliminar espacios innecesarios.
+// Si llega vacío, conservar los productos anteriores.
+if (typeof productos_suministrados === 'string') {
+    productos_suministrados = productos_suministrados.trim() || null;
+} else {
+    productos_suministrados = null;
+}
 
-        // Validar correo si se proporciona
-        if (
-            correo !== undefined &&
-            correo !== null &&
-            String(correo).trim() !== ''
-        ) {
-            correo = String(correo).trim();
+        // Limpiar espacios de los campos obligatorios
+        nombre = nombre.trim();
+        productos_suministrados = productos_suministrados.trim();
 
-            const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Validar correo electrónico si se proporciona
+        if (correo !== undefined && correo !== null) {
 
-            if (!formatoCorreo.test(correo)) {
+            if (typeof correo !== 'string') {
                 return res.status(400).json({
-                    mensaje: 'El formato del correo electrónico no es válido.'
+                    mensaje: 'El correo electrónico debe ser un texto válido.'
                 });
             }
+
+            correo = correo.trim();
+
+            if (correo !== '') {
+                const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!formatoCorreo.test(correo)) {
+                    return res.status(400).json({
+                        mensaje: 'El formato del correo electrónico no es válido.'
+                    });
+                }
+            } else {
+                correo = null;
+            }
+
         } else {
             correo = null;
         }
 
-        // Normalizar campos opcionales
-        direccion = direccion?.trim() || null;
-        observaciones = observaciones?.trim() || null;
+        // Validar dirección si se proporciona
+        if (direccion !== undefined && direccion !== null) {
 
+            if (typeof direccion !== 'string') {
+                return res.status(400).json({
+                    mensaje: 'La dirección debe ser un texto válido.'
+                });
+            }
+
+            direccion = direccion.trim() || null;
+
+        } else {
+            direccion = null;
+        }
+
+        // Validar observaciones si se proporcionan
+        if (observaciones !== undefined && observaciones !== null) {
+
+            if (typeof observaciones !== 'string') {
+                return res.status(400).json({
+                    mensaje: 'Las observaciones deben ser un texto válido.'
+                });
+            }
+
+            observaciones = observaciones.trim() || null;
+
+        } else {
+            observaciones = null;
+        }
+
+        //comprobar telefono y correo duplicados
         const duplicados = await ProveedorModelo.verificarDuplicados(
     telefono,
     correo,

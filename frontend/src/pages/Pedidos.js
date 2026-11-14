@@ -1020,11 +1020,16 @@ const dimensiones = {
             cargarPedidos();
 
         } catch (error) {
+    console.error("Error al cancelar el pedido:", error);
 
-            console.error(error);
-            alert("Error al cancelar el pedido.");
+    await cargarPedidos();
 
-        }
+    alert(
+        error.message ||
+        "No se pudo cancelar el pedido."
+    );
+
+    }
 
     }
 
@@ -1222,9 +1227,11 @@ async function guardarPedido(e) {
 
     try {
         if (modoEdicion) {
+            const {estado, ...datosEdicion} = formulario;
+
             await pedidosService.editar(
                 pedidoSeleccionado.idpedido,
-                formulario
+                datosEdicion
             );
 
             alert("Pedido actualizado correctamente.");
@@ -1291,7 +1298,7 @@ async function guardarPedido(e) {
         }}
     >
         <option value="">Filtrar por estado</option>
-        <option value="Pendiente">Pendiente</option>
+        <option value="Pendiente" disabled>Pendiente</option>
         <option value="En preparación">En preparación</option>
         <option value="Listo para entregar">Listo para entregar</option>
         <option value="Entregado">Entregado</option>
@@ -1392,13 +1399,17 @@ async function guardarPedido(e) {
 
         } catch (error) {
             console.error("Error al actualizar estado:", error);
-            alert("No se pudo actualizar el estado.");
+
+            await cargarPedidos();
+            alert(
+                error.message ||
+                "No se pudo actualizar el estado.");
         }
     }}
 >
     {pedido.estado === "Pendiente" && (
         <>
-            <option value="Pendiente">Pendiente</option>
+            <option value="Pendiente" disabled>Pendiente</option>
             <option value="En preparación">En preparación</option>
         </>
     )}

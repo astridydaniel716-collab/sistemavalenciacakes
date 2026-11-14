@@ -2,7 +2,7 @@
    CONTENEDOR
 ========================= */
 
-.clientes-container {
+.proveedores-container {
     padding: 35px 40px;
     min-height: 100vh;
     background: #f8f5f9;
@@ -228,10 +228,10 @@
 }
 
 /* =========================
-   SIN CLIENTES
+   SIN proveedores
 ========================= */
 
-.sin-clientes {
+.sin-proveedores {
     text-align: center;
 
     padding: 35px !important;

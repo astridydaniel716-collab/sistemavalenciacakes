@@ -3,6 +3,7 @@ const Conexion = require('../config/Conexion');
 const PedidoModelo = {
 
     
+//calcular valores detalle del pedido
 async calcularDetallePedido(client, detalle) {
     if (!Array.isArray(detalle) || detalle.length === 0) {
         throw new Error("El pedido debe contener al menos un producto.");
@@ -11,22 +12,79 @@ async calcularDetallePedido(client, detalle) {
     const detalleCalculado = [];
 
     for (const item of detalle) {
-        const idproducto = Number(item.idproducto);
-        const cantidad = Number(item.cantidad);
-        const valorExtras = Number(item.valor_extras ?? 0);
 
-        if (!Number.isInteger(idproducto) || idproducto <= 0) {
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+            throw new Error("Los datos de un producto del pedido no son válidos.");
+        }
+
+        // Validar identificador
+        if (
+            (typeof item.idproducto !== "number" &&
+             typeof item.idproducto !== "string") ||
+            String(item.idproducto).trim() === ""
+        ) {
             throw new Error("Hay un producto con identificador inválido.");
         }
 
-        if (!Number.isInteger(cantidad) || cantidad <= 0) {
+        const idproducto = Number(item.idproducto);
+
+        if (!Number.isSafeInteger(idproducto) || idproducto <= 0) {
+            throw new Error("Hay un producto con identificador inválido.");
+        }
+
+        // Validar cantidad
+        if (
+            (typeof item.cantidad !== "number" &&
+             typeof item.cantidad !== "string") ||
+            String(item.cantidad).trim() === ""
+        ) {
             throw new Error("La cantidad debe ser un entero mayor que cero.");
         }
 
-        if (!Number.isFinite(valorExtras) || valorExtras < 0) {
-            throw new Error("El valor de los extras no puede ser negativo.");
+        const cantidad = Number(item.cantidad);
+
+        if (!Number.isSafeInteger(cantidad) || cantidad <= 0) {
+            throw new Error("La cantidad debe ser un entero mayor que cero.");
         }
 
+        // Validar valor de extras
+        const valorRecibido = item.valor_extras ?? 0;
+
+        if (
+            (typeof valorRecibido !== "number" &&
+             typeof valorRecibido !== "string") ||
+            String(valorRecibido).trim() === ""
+        ) {
+            throw new Error("El valor de los extras debe ser un número válido.");
+        }
+
+        const valorExtras = Number(valorRecibido);
+
+        if (
+            !Number.isSafeInteger(valorExtras) ||
+            valorExtras < 0
+        ) {
+            throw new Error("El valor de los extras debe ser un entero no negativo.");
+        }
+
+        // Validar descripción y extras
+        if (
+            item.descripcion !== undefined &&
+            item.descripcion !== null &&
+            typeof item.descripcion !== "string"
+        ) {
+            throw new Error("La descripción del producto debe ser texto.");
+        }
+
+        if (
+            item.extras !== undefined &&
+            item.extras !== null &&
+            typeof item.extras !== "string"
+        ) {
+            throw new Error("Los extras deben ser texto.");
+        }
+
+        // Consultar precio real en la base de datos
         const resultado = await client.query(
             `SELECT idproducto, nombre, precio_base
              FROM productos
@@ -41,12 +99,22 @@ async calcularDetallePedido(client, detalle) {
         const producto = resultado.rows[0];
         const precioBase = Number(producto.precio_base);
 
-        if (!Number.isFinite(precioBase) || precioBase < 0) {
+        if (
+            !Number.isSafeInteger(precioBase) ||
+            precioBase <= 0
+        ) {
             throw new Error("El precio base del producto no es válido.");
         }
 
         const precioUnitario = precioBase + valorExtras;
         const subtotal = precioUnitario * cantidad;
+
+        if (
+            !Number.isSafeInteger(precioUnitario) ||
+            !Number.isSafeInteger(subtotal)
+        ) {
+            throw new Error("El importe del producto supera el límite permitido.");
+        }
 
         detalleCalculado.push({
             idproducto: producto.idproducto,
@@ -63,6 +131,10 @@ async calcularDetallePedido(client, detalle) {
         (suma, item) => suma + item.subtotal,
         0
     );
+
+    if (!Number.isSafeInteger(total)) {
+        throw new Error("El total del pedido supera el límite permitido.");
+    }
 
     return { detalle: detalleCalculado, total };
 },
@@ -102,18 +174,27 @@ try {
             );
 
             // Validar anticipo y calcular saldo en el servidor
-            const anticipo = Number(data.anticipo ?? 0);
+            const anticipoRecibido = data.anticipo ?? 0;
 
-            if (
-                !Number.isFinite(anticipo) ||
-                anticipo < 0 ||
-                anticipo > total
-            ) {
-                throw new Error(
-                    "El anticipo debe estar entre cero y el total del pedido."
-                );
-            }
+if (
+    (typeof anticipoRecibido !== "number" &&
+     typeof anticipoRecibido !== "string") ||
+    String(anticipoRecibido).trim() === ""
+) {
+    throw new Error("El anticipo debe ser un número válido.");
+}
 
+const anticipo = Number(anticipoRecibido);
+
+if (
+    !Number.isSafeInteger(anticipo) ||
+    anticipo < 0 ||
+    anticipo > total
+) {
+    throw new Error(
+        "El anticipo debe ser un entero entre cero y el total del pedido."
+    );
+}
             const saldo = total - anticipo;
 
             // Crear el pedido con los importes calculados
@@ -441,17 +522,27 @@ async obtenerPedidoPorId(idpedido) {
                 );
 
             // Validar anticipo y calcular saldo en el servidor
-            const anticipo = Number(data.anticipo ?? 0);
+            const anticipoRecibido = data.anticipo ?? 0;
 
-            if (
-                !Number.isFinite(anticipo) ||
-                anticipo < 0 ||
-                anticipo > total
-            ) {
-                throw new Error(
-                    "El anticipo debe estar entre cero y el total del pedido."
-                );
-            }
+if (
+    (typeof anticipoRecibido !== "number" &&
+     typeof anticipoRecibido !== "string") ||
+    String(anticipoRecibido).trim() === ""
+) {
+    throw new Error("El anticipo debe ser un número válido.");
+}
+
+const anticipo = Number(anticipoRecibido);
+
+if (
+    !Number.isSafeInteger(anticipo) ||
+    anticipo < 0 ||
+    anticipo > total
+) {
+    throw new Error(
+        "El anticipo debe ser un entero entre cero y el total del pedido."
+    );
+}
 
             const saldo = total - anticipo;
 
@@ -542,88 +633,107 @@ async obtenerPedidoPorId(idpedido) {
 
 // ACTUALIZAR ESTADO DEL PEDIDO
 
+
 async actualizarEstado(idpedido, nuevoEstado) {
+    const id = Number(idpedido);
 
-    // Obtener el estado actual del pedido
-    const consultaActual = `
-        SELECT estado
-        FROM pedidos
-        WHERE idpedido = $1;
-    `;
-
-    const resultadoActual = await Conexion.query(consultaActual, [idpedido]);
-
-    if (resultadoActual.rows.length === 0) {
-        return {
-            error: "Pedido no encontrado."
-        };
+    if (!Number.isInteger(id) || id <= 0) {
+        return { error: "Identificador de pedido inválido." };
     }
 
-    const estadoActual = resultadoActual.rows[0].estado;
+    const client = await Conexion.connect();
 
-    if (
-    estadoActual === "Entregado" ||
-    estadoActual === "Cancelado"
-) {
-    throw new Error(
-        "No se pueden editar pedidos entregados o cancelados."
-    );
-}
+    try {
+        await client.query("BEGIN");
 
-    // Secuencia permitida
-    const flujoEstados = [
-        "Pendiente",
-        "En preparación",
-        "Listo para entregar",
-        "Entregado"
-    ];
+        // Bloquear el pedido para evitar operaciones simultáneas.
+        const consultaActual = `
+            SELECT estado
+            FROM pedidos
+            WHERE idpedido = $1
+            FOR UPDATE;
+        `;
 
-    // Cancelado no puede avanzar ni retroceder
-    if (estadoActual === "Cancelado") {
-        return {
-            error: "Un pedido cancelado no puede cambiar de estado."
-        };
+        const resultadoActual = await client.query(consultaActual, [id]);
+
+        if (resultadoActual.rows.length === 0) {
+            await client.query("COMMIT");
+            return { error: "Pedido no encontrado." };
+        }
+
+        const estadoActual = resultadoActual.rows[0].estado;
+
+        // Los estados finales no pueden modificarse.
+        if (estadoActual === "Cancelado") {
+            await client.query("COMMIT");
+            return {
+                error: "Un pedido cancelado no puede cambiar de estado."
+            };
+        }
+
+        if (estadoActual === "Entregado") {
+            await client.query("COMMIT");
+            return {
+                error: "Un pedido entregado no puede cambiar de estado."
+            };
+        }
+
+        // Secuencia de estados permitida.
+        const flujoEstados = [
+            "Pendiente",
+            "En preparación",
+            "Listo para entregar",
+            "Entregado"
+        ];
+
+        const posicionActual = flujoEstados.indexOf(estadoActual);
+        const posicionNueva = flujoEstados.indexOf(nuevoEstado);
+
+        if (posicionNueva === -1) {
+            await client.query("COMMIT");
+            return { error: "Estado no válido." };
+        }
+
+        // Solo permite avanzar al siguiente estado.
+        if (posicionNueva !== posicionActual + 1) {
+            await client.query("COMMIT");
+            return {
+                error: `No se puede cambiar de "${estadoActual}" a "${nuevoEstado}".`
+            };
+        }
+
+        const consultaActualizar = `
+            UPDATE pedidos
+            SET estado = $1
+            WHERE idpedido = $2
+            AND estado = $3
+            RETURNING *;
+        `;
+
+        const resultado = await client.query(
+            consultaActualizar,
+            [nuevoEstado, id, estadoActual]
+        );
+
+        if (resultado.rows.length === 0) {
+            await client.query("COMMIT");
+            return {
+                error: "No se pudo actualizar el estado porque el pedido cambió."
+            };
+        }
+
+        await client.query("COMMIT");
+
+        return resultado.rows[0];
+
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+
+    } finally {
+        client.release();
     }
-
-    // Entregado es el estado final
-    if (estadoActual === "Entregado") {
-        return {
-            error: "Un pedido entregado no puede cambiar de estado."
-        };
-    }
-
-    const posicionActual = flujoEstados.indexOf(estadoActual);
-    const posicionNueva = flujoEstados.indexOf(nuevoEstado);
-
-    // Verificar que el nuevo estado sea válido
-    if (posicionNueva === -1) {
-        return {
-            error: "Estado no válido."
-        };
-    }
-
-    // Solo se permite avanzar exactamente un estado
-    if (posicionNueva !== posicionActual + 1) {
-        return {
-            error: `No se puede cambiar de "${estadoActual}" a "${nuevoEstado}".`
-        };
-    }
-
-    const sql = `
-        UPDATE pedidos
-        SET estado = $1
-        WHERE idpedido = $2
-        RETURNING *;
-    `;
-
-    const resultado = await Conexion.query(sql, [
-        nuevoEstado,
-        idpedido
-    ]);
-
-    return resultado.rows[0];
 },
-
 
     // CANCELAR PEDIDO
     async cancelarPedido(idpedido) {
