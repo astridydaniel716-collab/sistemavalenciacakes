@@ -168,41 +168,58 @@ async actualizarEstado(id, estado) {
 
 
     // Obtener pedidos próximos a entregar
-    async obtenerProximos() {
+async obtenerProximos() {
 
-        const respuesta = await apiFetch(`${API_PEDIDOS}/todos`);
+    const respuesta = await apiFetch(`${API_PEDIDOS}/todos`);
 
-        if (!respuesta.ok) {
-            throw new Error("Error al obtener pedidos.");
+    if (!respuesta.ok) {
+        throw new Error("Error al obtener pedidos.");
+    }
+
+    const pedidos = await respuesta.json();
+
+    // Convertir la fecha sin desplazamientos de zona horaria
+    function obtenerFechaLocal(fecha) {
+        if (!fecha) return null;
+
+        const soloFecha = String(fecha).slice(0, 10);
+        const [anio, mes, dia] = soloFecha.split('-').map(Number);
+
+        return new Date(anio, mes - 1, dia);
+    }
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    // Límite: hoy + 3 días
+    const limite = new Date(hoy);
+    limite.setDate(limite.getDate() + 3);
+
+    return pedidos.filter(pedido => {
+
+        // Excluir pedidos entregados y cancelados
+        if (
+            pedido.estado === "Entregado" ||
+            pedido.estado === "Cancelado"
+        ) {
+            return false;
         }
 
-        const pedidos = await respuesta.json();
+        const fecha = obtenerFechaLocal(pedido.fecha_entrega);
 
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+        if (!fecha) return false;
 
-        const limite = new Date(hoy);
-        limite.setDate(limite.getDate() + 3);
+        fecha.setHours(0, 0, 0, 0);
 
-        return pedidos.filter(pedido => {
+        // Incluir desde hoy hasta los próximos 3 días
+        return fecha >= hoy && fecha <= limite;
 
-            if (
-                pedido.estado === "Entregado" ||
-                pedido.estado === "Cancelado"
-            ) {
-                return false;
-            }
+    }).sort((a, b) =>
+        obtenerFechaLocal(a.fecha_entrega) -
+        obtenerFechaLocal(b.fecha_entrega)
+    );
 
-            const fecha = new Date(pedido.fecha_entrega);
-            fecha.setHours(0, 0, 0, 0);
-
-            return fecha >= hoy && fecha <= limite;
-
-        }).sort((a, b) =>
-            new Date(a.fecha_entrega) - new Date(b.fecha_entrega)
-        );
-
-    },
+},
 
     // Cancelar pedido
     

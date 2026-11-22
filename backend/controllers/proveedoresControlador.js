@@ -270,7 +270,8 @@ const editarProveedor = async (req, res) => {
             });
         }
 
-// Validar productos suministrados si se proporcionan
+
+ // Validar productos suministrados durante la edición
 if (
     productos_suministrados !== undefined &&
     productos_suministrados !== null &&
@@ -281,18 +282,20 @@ if (
     });
 }
 
-// Si se envía un texto, eliminar espacios innecesarios.
-// Si llega vacío, conservar los productos anteriores.
+// Si se envían productos, limpiar espacios.
+// Si se omite el campo o llega vacío, enviar null
+// para conservar el valor anterior mediante COALESCE.
 if (typeof productos_suministrados === 'string') {
-    productos_suministrados = productos_suministrados.trim() || null;
+    productos_suministrados =
+        productos_suministrados.trim() || null;
 } else {
     productos_suministrados = null;
 }
 
+
         // Limpiar espacios de los campos obligatorios
         nombre = nombre.trim();
-        productos_suministrados = productos_suministrados.trim();
-
+       
         // Validar correo electrónico si se proporciona
         if (correo !== undefined && correo !== null) {
 
