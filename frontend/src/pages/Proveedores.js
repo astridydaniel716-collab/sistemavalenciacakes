@@ -121,86 +121,88 @@ function Proveedores() {
 };
 
     // Guardar proveedor
-    const guardarProveedor = async (e) => {
+    
+const guardarProveedor = async (e) => {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        setMensaje('');
-        setError('');
+    setMensaje('');
+    setError('');
 
-        // Validar nombre
-if (
-    typeof formulario.nombre !== 'string' ||
-    !formulario.nombre.trim()
-) {
-    setError('El nombre del proveedor es obligatorio.');
-    return;
-}
-
-// Validar teléfono colombiano
-if (!/^[0-9]{10}$/.test(formulario.telefono.trim())) {
-    setError('El teléfono debe tener 10 dígitos.');
-    return;
-}
-
-// Validar productos suministrados
-if (
-    typeof formulario.productos_suministrados !== 'string' ||
-    !formulario.productos_suministrados.trim()
-) {
-    setError('Los productos suministrados son obligatorios.');
-    return;
-}
-
-// Validar correo si se proporciona
-if (formulario.correo.trim() !== '') {
-    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!formatoCorreo.test(formulario.correo.trim())) {
-        setError('El formato del correo electrónico no es válido.');
+    // Validar nombre
+    if (
+        typeof formulario.nombre !== 'string' ||
+        !formulario.nombre.trim()
+    ) {
+        setError('El nombre del proveedor es obligatorio.');
         return;
     }
-}
 
-// Validar dirección
-if (typeof formulario.direccion !== 'string') {
-    setError('La dirección debe ser un texto válido.');
-    return;
-}
+    // Validar teléfono colombiano
+    if (!/^[0-9]{10}$/.test(formulario.telefono.trim())) {
+        setError('El teléfono debe tener 10 dígitos.');
+        return;
+    }
 
-// Validar observaciones
-if (typeof formulario.observaciones !== 'string') {
-    setError('Las observaciones deben ser un texto válido.');
-    return;
-}
+    // Validar productos suministrados
+    if (
+        typeof formulario.productos_suministrados !== 'string' ||
+        !formulario.productos_suministrados.trim()
+    ) {
+        setError('Los productos suministrados son obligatorios.');
+        return;
+    }
 
-        try {
+    // Validar correo si se proporciona
+    if (formulario.correo.trim() !== '') {
 
-            if (modoEdicion) {
+        const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                await editarProveedor(
-                    proveedorEditando.idproveedor,
-                    formulario
-                );
-
-                setMensaje('Proveedor actualizado correctamente.');
-
-            } else {
-
-                await crearProveedor(formulario);
-
-                setMensaje('Proveedor registrado correctamente.');
-            }
-
-            setMostrarModal(false);
-
-            await cargarProveedores();
-
-        } catch (error) {
-
-            setError(error.message);
+        if (!formatoCorreo.test(formulario.correo.trim())) {
+            setError('El formato del correo electrónico no es válido.');
+            return;
         }
-    };
+    }
+
+    // Validar dirección
+    if (typeof formulario.direccion !== 'string') {
+        setError('La dirección debe ser un texto válido.');
+        return;
+    }
+
+    // Validar observaciones
+    if (typeof formulario.observaciones !== 'string') {
+        setError('Las observaciones deben ser un texto válido.');
+        return;
+    }
+
+    try {
+
+        if (modoEdicion) {
+
+            await editarProveedor(
+                proveedorEditando.idproveedor,
+                formulario
+            );
+
+            setMensaje('Proveedor actualizado correctamente.');
+
+        } else {
+
+            await crearProveedor(formulario);
+
+            setMensaje('Proveedor registrado correctamente.');
+        }
+
+        setMostrarModal(false);
+
+        await cargarProveedores();
+
+    } catch (error) {
+
+        setError(error.message);
+    }
+};
 
 
     // Buscar Proveedores
@@ -295,7 +297,7 @@ if (typeof formulario.observaciones !== 'string') {
                 </div>
             )}
 
-            {error && (
+            {error && !mostrarModal && (
                 <div className="mensaje-error">
                     {error}
                 </div>
@@ -436,7 +438,12 @@ if (typeof formulario.observaciones !== 'string') {
                         </div>
 
 
-                        <form onSubmit={guardarProveedor}>
+                        <form onSubmit={guardarProveedor} noValidate>
+                            {error && (
+                                <div className="mensaje-error">
+                                 {error}
+                            </div>
+                        )}
 
                             <div className="form-grid">
 

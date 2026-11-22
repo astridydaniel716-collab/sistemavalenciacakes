@@ -832,3 +832,34 @@
         box-sizing: border-box;
     }
 }
+
+/* ===========================================
+   MENSAJES - MÓDULO PEDIDOS
+=========================================== */
+
+.pedido-mensaje-exito,
+.pedido-mensaje-error {
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.pedido-mensaje-exito {
+    background: #eee1f5;
+    color: #765b80;
+}
+
+.pedido-mensaje-error {
+    background: #fcecef;
+    color: #a45d73;
+}
+
+/* Mensaje de error dentro del modal */
+
+.modal-pedido .pedido-mensaje-error {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+

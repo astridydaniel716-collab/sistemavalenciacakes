@@ -67,14 +67,13 @@ function Productos() {
     // Estados del módulo
     const [productos, setProductos] = useState([]);
     const [busqueda, setBusqueda] = useState("");
-
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarDetalle, setMostrarDetalle] = useState(false);
-
     const [modoEdicion, setModoEdicion] = useState(false);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-
     const [formulario, setFormulario] = useState(formularioInicial);
+    const [mensaje, setMensaje] = useState('');
+    const [error, setError] = useState('');
 
 
     // Cargar productos al iniciar el componente
@@ -118,6 +117,8 @@ function Productos() {
     function abrirNuevo() {
         setModoEdicion(false);
         setFormulario(formularioInicial);
+        setMensaje('');
+        setError('');
         setMostrarModal(true);
     }
 
@@ -134,7 +135,8 @@ function Productos() {
             porciones: producto.porciones,
             precio_base: producto.precio_base,
         });
-
+        setMensaje('');
+        setError('');
         setMostrarModal(true);
     }
 
@@ -147,35 +149,85 @@ function Productos() {
 
 
     // Guardar o actualizar producto
-    async function guardarProducto(e) {
-e.preventDefault();
+    
+async function guardarProducto(e) {
 
-try {
-    if (modoEdicion) {
-        await productoService.editar(
-            productoSeleccionado.idproducto,
-            formulario
-        );
+    e.preventDefault();
 
-        alert("Producto actualizado correctamente.");
-    } else {
-        await productoService.crear(formulario);
+    setMensaje('');
+    setError('');
 
-        alert("Producto registrado correctamente.");
+    // Validar nombre
+    if (!formulario.nombre.trim()) {
+        setError('Debes seleccionar un producto.');
+        return;
     }
 
-    setMostrarModal(false);
-    await cargarProductos();
+    // Validar categoría
+    if (!formulario.categoria.trim()) {
+        setError('Debes seleccionar una categoría.');
+        return;
+    }
 
-} catch (error) {
-    console.error("Error al guardar el producto:", error);
+    // Validar tipo de crema
+    if (
+        !productosSinCrema.includes(formulario.nombre) &&
+        !formulario.tipo_crema.trim()
+    ) {
+        setError('Debes seleccionar un tipo de crema.');
+        return;
+    }
 
-    alert(
-        error.message ||
-        "Ocurrió un error al guardar el producto."
-    );
-}
+    // Validar porciones
+    if (!formulario.porciones.trim()) {
+        setError('Debes seleccionar las porciones.');
+        return;
+    }
 
+    // Validar precio
+    const precio = Number(formulario.precio_base);
+
+    if (
+        formulario.precio_base === '' ||
+        !Number.isFinite(precio) ||
+        precio <= 0 ||
+        !Number.isInteger(precio)
+    ) {
+        setError('El precio base debe ser un número entero mayor que cero.');
+        return;
+    }
+
+    try {
+
+        if (modoEdicion) {
+
+            await productoService.editar(
+                productoSeleccionado.idproducto,
+                formulario
+            );
+
+            setMensaje('Producto actualizado correctamente.');
+
+        } else {
+
+            await productoService.crear(formulario);
+
+            setMensaje('Producto registrado correctamente.');
+        }
+
+        setMostrarModal(false);
+
+        await cargarProductos();
+
+    } catch (error) {
+
+        console.error('Error al guardar el producto:', error);
+
+        setError(
+            error.message ||
+            'Ocurrió un error al guardar el producto.'
+        );
+    }
 }
 
 
@@ -190,17 +242,18 @@ if (!confirmar) return;
 try {
     await productoService.eliminar(id);
 
-    alert("Producto eliminado correctamente.");
+    setError('');
+    setMensaje('Producto eliminado correctamente.');    
 
     await cargarProductos();
 
 } catch (error) {
     console.error("Error al eliminar el producto:", error);
 
-    alert(
-        error.message ||
-        "Error al eliminar el producto."
-    );
+    setError(
+    error.message ||
+    'Error al eliminar el producto.'
+);
 }
 
 }
@@ -234,6 +287,17 @@ try {
         <div className="contenedor-productos">
 
             <div className="encabezado-modulo">
+                {mensaje && (
+            <div className="producto-mensaje-exito">
+                {mensaje}
+            </div>
+        )}
+
+                {error && !mostrarModal && (
+            <div className="producto-mensaje-error">
+                 {error}
+            </div>
+        )}
                 <h2>Productos</h2>
 
                 <button
@@ -359,7 +423,13 @@ try {
                         </h3>
 
 
-                        <form onSubmit={guardarProducto}>
+                        <form onSubmit={guardarProducto} noValidate>
+
+                        {error && (
+                        <div className="producto-mensaje-error">
+                            {error}
+                        </div>
+                    )}
 
                             <label>Producto</label>
 

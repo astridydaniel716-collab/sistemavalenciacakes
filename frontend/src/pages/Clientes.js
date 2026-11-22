@@ -189,38 +189,61 @@ const abrirPedidoDesdeHistorial = (idpedido) => {
     // Guardar cliente
     const guardarCliente = async (e) => {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        setMensaje('');
-        setError('');
+    setMensaje('');
+    setError('');
 
-        try {
+    // Validar nombre
+    if (!formulario.nombre.trim()) {
+        setError('El nombre del cliente es obligatorio.');
+        return;
+    }
 
-            if (modoEdicion) {
+    // Validar teléfono vacío
+    if (!formulario.telefono.trim()) {
+        setError('El teléfono del cliente es obligatorio.');
+        return;
+    }
 
-                await editarCliente(
-                    clienteEditando.idcliente,
-                    formulario
-                );
+    // Validar correo si fue ingresado
+    if (formulario.correo.trim()) {
 
-                setMensaje('Cliente actualizado correctamente.');
+        const expresionCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            } else {
-
-                await crearCliente(formulario);
-
-                setMensaje('Cliente registrado correctamente.');
-            }
-
-            setMostrarModal(false);
-
-            await cargarClientes();
-
-        } catch (error) {
-
-            setError(error.message);
+        if (!expresionCorreo.test(formulario.correo.trim())) {
+            setError('El correo electrónico no tiene un formato válido. Verifica la dirección ingresada.');
+            return;
         }
-    };
+    }
+
+    try {
+
+        if (modoEdicion) {
+
+            await editarCliente(
+                clienteEditando.idcliente,
+                formulario
+            );
+
+            setMensaje('Cliente actualizado correctamente.');
+
+        } else {
+
+            await crearCliente(formulario);
+
+            setMensaje('Cliente registrado correctamente.');
+        }
+
+        setMostrarModal(false);
+
+        await cargarClientes();
+
+    } catch (error) {
+
+        setError(error.message);
+    }
+};
 
 
     // Buscar clientes
@@ -315,7 +338,7 @@ const abrirPedidoDesdeHistorial = (idpedido) => {
                 </div>
             )}
 
-            {error && (
+            {error &&  !mostrarModal && (
                 <div className="mensaje-error">
                     {error}
                 </div>
@@ -464,9 +487,16 @@ const abrirPedidoDesdeHistorial = (idpedido) => {
                         </div>
 
 
-                        <form onSubmit={guardarCliente}>
+                       <form onSubmit={guardarCliente} noValidate>
 
-                            <div className="form-grid">
+    {/* MENSAJE DE ERROR DEL FORMULARIO */}
+    {error && (
+        <div className="mensaje-error">
+            {error}
+        </div>
+    )}
+
+    <div className="form-grid">
 
                                 <div className="form-group">
 

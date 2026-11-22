@@ -55,6 +55,8 @@ function Pedidos() {
     const [modoEdicion, setModoEdicion] = useState(false);
     const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
     const [formulario, setFormulario] = useState(formularioInicial);
+    const [mensaje, setMensaje] = useState('');
+    const [error, setError] = useState('');
     const detalleInicial = {
     idproducto: "",
     descripcion: "",
@@ -184,7 +186,8 @@ const pedidosFiltrados = obtenerPedidosFiltrados();
 
 
     function abrirNuevoPedido() {
-
+        setMensaje('');
+        setError('');
         setModoEdicion(false);
         setFormulario(formularioInicial);
         setMostrarModal(true);
@@ -192,11 +195,12 @@ const pedidosFiltrados = obtenerPedidosFiltrados();
     }
 
     async function abrirEditarPedido(id) {
-
+            
         try {
 
             const pedido = await pedidosService.obtenerPorId(id);
-
+            setMensaje('');
+            setError('');
             setModoEdicion(true);
             setPedidoSeleccionado(pedido);
             setFormulario(pedido);
@@ -1129,9 +1133,11 @@ function actualizarProducto(e) {
 function agregarProducto() {
 
     if (!productoActual.idproducto) {
-        alert("Seleccione un producto.");
-        return;
-    }
+        setError('Seleccione un producto antes de agregarlo al pedido.');
+    return;
+}
+
+setError('');
 
     const nuevoDetalle = [...formulario.detalle, productoActual];
 
@@ -1194,54 +1200,73 @@ function cambiarAnticipo(e) {
 // GUARDAR PEDIDO
 
 
+
 async function guardarPedido(e) {
+
     e.preventDefault();
 
-    if (!formulario.fecha_entrega) {
-        alert("Debe seleccionar la fecha de entrega.");
+    setMensaje('');
+    setError('');
+
+    // Validar cliente
+    if (!formulario.idcliente) {
+        setError('Debes seleccionar un cliente.');
         return;
     }
 
+    // Validar fecha de entrega
+    if (!formulario.fecha_entrega) {
+        setError('Debe seleccionar la fecha de entrega.');
+        return;
+    }
+
+    // Validar productos
     if (formulario.detalle.length === 0) {
-        alert("Debe agregar al menos un producto.");
+        setError('Debe agregar al menos un producto.');
         return;
     }
 
     const total = Number(formulario.total);
     const anticipo = Number(formulario.anticipo || 0);
 
+    // Validar total
     if (!Number.isFinite(total) || total <= 0) {
-        alert("El total del pedido debe ser mayor que cero.");
+        setError('El total del pedido debe ser mayor que cero.');
         return;
     }
 
+    // Validar anticipo
     if (!Number.isFinite(anticipo) || anticipo < 0) {
-        alert("El anticipo no puede ser negativo.");
+        setError('El anticipo no puede ser negativo.');
         return;
     }
 
     if (anticipo > total) {
-        alert("El anticipo no puede superar el total del pedido.");
+        setError('El anticipo no puede superar el total del pedido.');
         return;
     }
 
     try {
+
         if (modoEdicion) {
-            const {estado, ...datosEdicion} = formulario;
+
+            const { estado, ...datosEdicion } = formulario;
 
             await pedidosService.editar(
                 pedidoSeleccionado.idpedido,
                 datosEdicion
             );
 
-            alert("Pedido actualizado correctamente.");
+            setMensaje('Pedido actualizado correctamente.');
+
         } else {
+
             await pedidosService.crear(formulario);
 
-            alert("Pedido registrado correctamente.");
+            setMensaje('Pedido registrado correctamente.');
         }
 
-        // Limpiar y cerrar solo después de guardar correctamente
+        // Cerrar y limpiar después de guardar correctamente
         setMostrarModal(false);
         setFormulario(formularioInicial);
         setProductoActual(detalleInicial);
@@ -1249,11 +1274,12 @@ async function guardarPedido(e) {
         await cargarPedidos();
 
     } catch (error) {
-        console.error("Error al guardar el pedido:", error);
 
-        alert(
+        console.error('Error al guardar el pedido:', error);
+
+        setError(
             error.message ||
-            "No se pudo guardar el pedido. Los datos del formulario se conservan."
+            'No se pudo guardar el pedido. Los datos del formulario se conservan.'
         );
     }
 }
@@ -1263,7 +1289,7 @@ async function guardarPedido(e) {
         <div className="contenedor-pedidos">
 
             <div className="encabezado-modulo">
-
+                
                 <h2>Pedidos</h2>
 
                 <button
@@ -1274,7 +1300,17 @@ async function guardarPedido(e) {
                 </button>
 
             </div>
+            {mensaje && (
+    <div className="pedido-mensaje-exito">
+        {mensaje}
+    </div>
+)}
 
+{error && !mostrarModal && (
+    <div className="pedido-mensaje-error">
+        {error}
+    </div>
+)}
             
 <div className="barra-busqueda">
     <input
@@ -1492,7 +1528,13 @@ async function guardarPedido(e) {
                             {modoEdicion ? "Editar Pedido" : "Registrar Pedido"}
                         </h3>
 
-                        <form onSubmit={guardarPedido}>
+                        <form onSubmit={guardarPedido} noValidate>
+
+                            {error && (
+                        <div className="pedido-mensaje-error">
+                            {error}
+                        </div>
+                    )}
 
                             <div className="grid-pedido">
 

@@ -317,6 +317,37 @@
     color:#8b5d7d;
 }
 
+
+/* ===========================================
+   MENSAJES - MÓDULO PRODUCTOS
+=========================================== */
+
+.producto-mensaje-exito,
+.producto-mensaje-error {
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.producto-mensaje-exito {
+    background: #eee1f5;
+    color: #765b80;
+}
+
+.producto-mensaje-error {
+    background: #fcecef;
+    color: #a45d73;
+}
+
+/* Mensaje de error dentro del modal */
+.modal .producto-mensaje-error {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+
 /* ===========================================
    RESPONSIVE
 =========================================== */
