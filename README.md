@@ -74,6 +74,7 @@ Desde la raíz del proyecto:
 cd backend
 npm install
 
+- Cloudinary (almacenamiento de imágenes).
 ### 4.3. Instalar las dependencias del frontend
 
 Abre una segunda terminal en la raíz del proyecto y ejecuta:
@@ -119,6 +120,80 @@ Sustituye los valores de ejemplo por los correspondientes a tu instalación.
 - `JWT_SECRET`: clave utilizada para firmar los tokens de autenticación.
 
 No publiques el archivo `.env` ni compartas credenciales reales.
+
+### 5.3. Configuración de Cloudinary
+
+El proyecto utiliza Cloudinary para almacenar las imágenes de referencia asociadas a los pedidos. Este servicio permite guardar las imágenes en la nube y acceder a ellas mediante una URL.
+
+- Crear una cuenta en Cloudinary
+- Ingresa a https://cloudinary.com/.
+- Regístrate o inicia sesión.
+- Accede al Dashboard de tu cuenta.
+- Identifica las siguientes credenciales:
+
+Cloud Name.
+API Key.
+API Secret.
+
+#### Instalar la dependencia
+
+Desde la carpeta backend, ejecuta:
+- npm install cloudinary
+
+Si la dependencia ya está incluida en package.json, no es necesario instalarla nuevamente.
+
+#### Configurar las variables de entorno
+
+Abre el archivo backend/.env y agrega:
+
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
+
+Reemplaza los valores de ejemplo por las credenciales de tu cuenta.
+
+#### Configurar el archivo de conexión
+
+El backend utiliza el paquete cloudinary para establecer la conexión con el servicio mediante las variables de entorno:
+
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+module.exports = cloudinary;
+
+#### Recepción y validación de imágenes
+
+El proyecto utiliza Multer para recibir las imágenes de referencia de los pedidos.
+
+La configuración utiliza almacenamiento temporal en memoria (`memoryStorage`), por lo que los archivos no se guardan inicialmente en el disco del servidor.
+
+Antes de procesar una imagen, se realizan las siguientes validaciones:
+
+- **Formatos permitidos:** JPG, JPEG, PNG y WEBP.
+- **Tamaño máximo:** 5 MB por archivo.
+- **Validación del formato:** se comprueba tanto el tipo MIME como la extensión del archivo.
+
+Si el archivo no cumple con estas condiciones, se rechaza y se genera un mensaje de error.
+
+Una vez recibida y validada, la imagen puede procesarse desde el backend para enviarla a Cloudinary y obtener una URL que permita consultarla posteriormente.
+
+#### Configurar Cloudinary en Render
+
+Para habilitar el almacenamiento de imágenes en el entorno desplegado:
+
+- Ingresa a tu cuenta de Render.
+- Selecciona el servicio correspondiente al backend.
+- Accede a la sección Environment.
+- Agrega las tres variables de Cloudinary:
+    CLOUDINARY_CLOUD_NAME
+    CLOUDINARY_API_KEY
+    CLOUDINARY_API_SECRET
+- Guarda los cambios y realiza un nuevo despliegue si es necesario.
 
 ## 6. Configuración de la base de datos
 
